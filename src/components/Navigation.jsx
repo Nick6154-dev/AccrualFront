@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 const token = sessionStorage.getItem("token");
 const variableFiniquito = "https://accrual.up.railway.app/accrualData/settlement";
@@ -78,9 +79,9 @@ function cerrar(){
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="/index">Inicio</Nav.Link>
+              <Link to="/index" className="nav-link">Inicio</Link>
 
-              <Nav.Link href="/datosDocente">Datos Docente</Nav.Link>
+              <Link to="/datosDocente" className="nav-link">Datos xdxdxd</Link>
 
               <NavDropdown title="Plan Devengamiento" id="basic-nav-dropdown">
                 <NavDropdown.Item onClick={handleShow}>
@@ -99,7 +100,7 @@ function cerrar(){
                 <Modal.Body>
                   <p>
                     Cuando se solicita un finiquito, no se podrá ya registrar
-                    más periodos ni actividades de devengamiento.
+                    más periodos ni actividades.
                   </p>
 
                   <p>
@@ -116,8 +117,8 @@ function cerrar(){
                 title="Actividad Devengamiento"
                 id="basic-nav-dropdown"
               >
-                <NavDropdown.Item href="/nuevaActividad">Ingresar</NavDropdown.Item>
-                <NavDropdown.Item href="/mostrarActividades">Ver</NavDropdown.Item>
+                <Link to="/nuevaActividad" className="dropdown-item">Nueva Actividad</Link>
+                <Link to="/MostrarActividades" className="dropdown-item">Mostrar Actividades</Link>
               </NavDropdown>
               <Nav.Link onClick={cerrar}>Cerrar Sesión</Nav.Link>
             </Nav>
