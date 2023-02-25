@@ -63,7 +63,6 @@ function Login() {
     <div>
       <Form method="post">
         <FormularioLogin />
-
         <div className="button-login text-center py-3">
           <input
             className=" btn btn-primary my-2 "
