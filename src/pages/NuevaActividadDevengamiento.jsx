@@ -4,8 +4,7 @@ import Swal from "sweetalert2";
 import Error from "../components/Error";
 
 const token = sessionStorage.getItem("token");
-const variableSubmit =
-  process.env.REACT_APP_API_GENERAL + "/activityPlanAccrual";
+const variableSubmit ="https://accrual.up.railway.app/activityPlanAccrual";
 
 export async function action({ request }) {
   const storedData = localStorage.getItem("datoSeleccionado");

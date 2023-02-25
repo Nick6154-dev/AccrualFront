@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 const periodo = localStorage.getItem("periodo");
 const token = sessionStorage.getItem("token");
 const idPersona = sessionStorage.getItem("idPersona");
-const obteneridPlan =
-  process.env.REACT_APP_API_GENERAL + "/plan/byIdPersonPeriod";
+
+const obteneridPlan = "https://accrual.up.railway.app/plan/byIdPersonPeriod";
 
   const useLoaderData2 = () => {
     const [data2, setData2] = useState({});

@@ -2,7 +2,7 @@ import FormularioLogin from "../components/FormularioLogin";
 import { Form } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const variable = process.env.REACT_APP_API_GENERAL + "/accrual/authorization";
+const variable = "https://accrual.up.railway.app/accrual/authorization";
 
 export async function action({ request }) {
   const formData = await request.formData();

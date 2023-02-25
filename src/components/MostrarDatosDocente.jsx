@@ -9,16 +9,14 @@ import Swal from "sweetalert2";
 const idPersona = sessionStorage.getItem("idPersona");
 const token = sessionStorage.getItem("token");
 
-const variable = process.env.REACT_APP_API_GENERAL + "/person";
-const variableDatosDocente =
-  process.env.REACT_APP_API_GENERAL + "/docent/byIdPerson";
-const variableDatosDevengamiento =
-  process.env.REACT_APP_API_GENERAL + "/accrualData/ByIdPerson";
-const variableActualizarDevengamiento =
-  process.env.REACT_APP_API_GENERAL + "/accrualData";
-const variableRedes = process.env.REACT_APP_API_GENERAL + "/network/byIdPerson";
-const variableActualizarRedes = process.env.REACT_APP_API_GENERAL + "/network";
-const variableObservaciones =  process.env.REACT_APP_API_GENERAL+"/accrualData/observation"
+const variable = "https://accrual.up.railway.app/person";
+const variableDatosDocente = "https://accrual.up.railway.app/docent/byIdPerson";
+const variableDatosDevengamiento ="https://accrual.up.railway.app/accrualData/ByIdPerson";
+const variableActualizarDevengamiento = "https://accrual.up.railway.app/accrualData";
+const variableRedes =  "https://accrual.up.railway.app/network/byIdPerson";
+const variableActualizarRedes = "https://accrual.up.railway.app/network";
+const variableObservaciones = "https://accrual.up.railway.app/accrualData/observation"
+
 function MostrarDatosDocente() {
   const [idAccrualData, setIdAccrualData] = useState("");
   const [idNetwork, setIdNetwork] = useState("");
@@ -108,6 +106,7 @@ function MostrarDatosDocente() {
         const fechaLecturaTesisAnio = dataDevengamiento.readingThesisDate[0];
         const fechaLecturaTesisMes = dataDevengamiento.readingThesisDate[1];
         const fechaLecturaTesisDia = dataDevengamiento.readingThesisDate[2];
+        
         const fechaLecturaTesis =
           fechaLecturaTesisDia +
           "/" +

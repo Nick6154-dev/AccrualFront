@@ -6,12 +6,10 @@ import Alert from "react-bootstrap/Alert";
 const periodo = localStorage.getItem("periodo");
 
 const token = sessionStorage.getItem("token");
-const variableTipoActividad = process.env.REACT_APP_API_GENERAL + "/type";
-const variableFacultad =
-  process.env.REACT_APP_API_GENERAL + "/faculty/byIdUniversity";
-const variableCarrera =
-  process.env.REACT_APP_API_GENERAL + "/career/byIdFaculty";
-const variableSubTipo = process.env.REACT_APP_API_GENERAL + "/subtype/byIdType";
+const variableTipoActividad = "https://accrual.up.railway.app/type";
+const variableFacultad = "https://accrual.up.railway.app/faculty/byIdUniversity";
+const variableCarrera ="https://accrual.up.railway.app/career/byIdFaculty";
+const variableSubTipo = "https://accrual.up.railway.app/subtype/byIdType";
 
 function FormularioNuevaActividad({actividad}) {
   const [estadoModal1, cambiarEstadoModal1] = useState(false);

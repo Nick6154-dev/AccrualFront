@@ -10,26 +10,26 @@ import Swal from "sweetalert2";
 
 const token = sessionStorage.getItem("token");
 const idPlan = sessionStorage.getItem("idPlan");
-const period = sessionStorage.getItem("idPeriodo");
+const period = "2022 - 2023";
 const idPerson = sessionStorage.getItem("idPersona");
-const variableObtenerActividades = process.env.REACT_APP_API_GENERAL + "/activityPlan/byPlan";
-const variableObtenerInstitucion =   process.env.REACT_APP_API_GENERAL + "/institution/withDetailsByIdActivityPlan";
-const variableNoEditable = process.env.REACT_APP_API_GENERAL + "/plan/updatePlanNotEditable";
+const variableObtenerActividades =
+  "https://accrual.up.railway.app/activityPlan/byPlan";
+const variableNoEditable =
+  "https://accrual.up.railway.app/plan/updatePlanNotEditable";
 
-  export async function action({params}){
-    await eliminarActividad(params.actividadId)
-    
-    return redirect ("/mostrarActividades")
-    }
+export async function action({ params }) {
+  await eliminarActividad(params.actividadId);
 
-function MostrarActividades({}) {
+  return redirect("/mostrarActividades");
+}
+
+function MostrarActividades() {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   // Consultas para datos de la actividad de devengamiento
-
   const useLoaderData1 = () => {
     const [dataActividad, setDataActividad] = useState({});
     const loader1 = async () => {
@@ -47,9 +47,7 @@ function MostrarActividades({}) {
         );
 
         const dataActividades = await response1.json();
-
-     
-
+      
 
         setDataActividad(dataActividades);
       } catch (error) {
@@ -62,56 +60,52 @@ function MostrarActividades({}) {
     return dataActividad;
   };
 
-
-
   // Obtener datos del editar actividad
   const datosActividadPlan = useLoaderData1();
-console.log(datosActividadPlan)
   //Enviar actividades
-  async function handleEnviar(){
-    
-  try {
-    const respuesta = await fetch(`${variableNoEditable}/${idPerson},${period}`, {
-      method: "PUT",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify("Se va"),
-    });
-    if (respuesta.ok) {
-      await Swal.fire({
-        title: "Enviado",
-        text:  "Actividades enviadas, recuerde ya no puede agregar ni editar más actividades",
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Cerrar",
-      });
-      window.location.href = "/mostrarActividades";
-    } else {
+  async function handleEnviar() {
+    try {
+      const respuesta = await fetch(
+        `${variableNoEditable}/${idPerson},${period}`,
+        {
+          method: "PATCH",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify("Se va"),
+        }
+      );
+      if (respuesta.ok) {
+        await Swal.fire({
+          title: "Enviado",
+          text: "Actividades enviadas, recuerde ya no puede agregar ni editar más actividades",
+          icon: "success",
+
+          confirmButtonColor: "#3085d6",
+        });
+        window.location.href = "/mostrarActividades";
+      } else {
+        await Swal.fire({
+          title: "Error",
+          text: "Ocurrió un error al enviar el formulario",
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error(error);
       await Swal.fire({
         title: "Error",
-        text: "Ocurrió un error al enviar el formulario",
+        text: "Ocurrió un error al guardar el formulario",
         icon: "error",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "OK",
       });
     }
-  } catch (error) {
-    console.error(error);
-    await Swal.fire({
-      title: "Error",
-      text: "Ocurrió un error al guardar el formulario",
-      icon: "error",
-      confirmButtonColor: "#3085d6",
-      confirmButtonText: "OK",
-    });
-  }
-  return null;
-
+    return null;
   }
 
   return (
@@ -139,85 +133,81 @@ console.log(datosActividadPlan)
               {datosActividadPlan.map((actividades, index) => (
                 <tr key={index}>
                   <td>
-                    {actividades.activity.idActivity === null
+                    {actividades.activityPlan.activity.idActivity === null
                       ? "No disponible"
-                      : actividades.activity.idActivity}
+                      : actividades.activityPlan.activity.idActivity}
                   </td>
                   <td>
-                    {actividades.type.nameActivityType === null
+                    {actividades.activityPlan.type.nameActivityType === null
                       ? "No disponible"
-                      : actividades.type.nameActivityType}
+                      : actividades.activityPlan.type.nameActivityType}
                   </td>
                   <td>
-                    {actividades.activity.startDate === null
+                    {actividades.activityPlan.activity.startDate === null
                       ? "No disponible"
-                      : actividades.activity.startDate}
+                      : actividades.activityPlan.activity.startDate[0] + "/"+ actividades.activityPlan.activity.startDate[1] + "/" + actividades.activityPlan.activity.startDate[2] }
                   </td>
                   <td>
-                    {actividades.activity.endDate === null
+                    {actividades.activityPlan.activity.endDate === null
                       ? "No disponible"
-                      : actividades.activity.endDate}
+                      : actividades.activityPlan.activity.endDate[0]+ "/"+ actividades.activityPlan.activity.endDate[1]+ "/"+actividades.activityPlan.activity.endDate[2] }
                   </td>
                   <td>
-                    {actividades.activity.description === null
+                    {actividades.activityPlan.activity.description === null
                       ? "No disponible"
-                      : actividades.activity.description}
+                      : actividades.activityPlan.activity.description}
                   </td>
 
                   <td>
-                    {actividades.activity.evidences === null
+                    {actividades.activityPlan.activity.evidences === null
                       ? "No disponible"
-                      : actividades.activity.evidences}
+                      : actividades.activityPlan.activity.evidences}
                   </td>
-                  
-                    <td>
-                      {actividades.activity.institutionName === null
-                        ? "No disponible"
-                        : actividades.activity.institutionName}
-                    </td>
-                  
+
+                  <td>
+                    {actividades.object.institution.institutionName === null
+                      ? "No disponible"
+                      : actividades.object.institution.institutionName}
+                  </td>
+
                   <div>
-                    <Button className="m-3"
+                    <Button
+                      className="m-3"
                       type="button"
                       variant="primary"
                       onClick={() =>
                         navigate(
-                          `/actividades/${actividades.idActivityPlan}/editar`
+                          `/actividades/${actividades.activityPlan.idActivityPlan}/editar`
                         )
                       }
                     >
                       Editar
-                 
-                  </Button>
-                  <Form
-                 method="post"
-                 action={`/actividades/${actividades.idActivityPlan}/eliminar`}
-                 onSubmit={(e) => {
-                   e.preventDefault();
-                   Swal.fire({
-                     title: '¿Está seguro de eliminar esta actividad?',
-                     icon: 'warning',
-                     showCancelButton: true,
-                     confirmButtonText: 'Sí, eliminar',
-                     cancelButtonText: 'Cancelar',
-                   }).then(async (result) => {
-                     if (result.isConfirmed) {
-                       await eliminarActividad(actividades.idActivityPlan);
-                       
-                     }
-                   });
-                 }}
-               >
-                 <Button
-                   type="submit"
-                   variant="danger"
-                 >
-                   Eliminar
-                 </Button>
-
-                  </Form>
+                    </Button>
+                    <Form
+                      method="post"
+                      action={`/actividades/${actividades.activityPlan.idActivityPlan}/eliminar`}
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        Swal.fire({
+                          title: "¿Está seguro de eliminar esta actividad?",
+                          icon: "warning",
+                          showCancelButton: true,
+                          confirmButtonText: "Sí, eliminar",
+                          cancelButtonText: "Cancelar",
+                        }).then(async (result) => {
+                          if (result.isConfirmed) {
+                            await eliminarActividad(
+                              actividades.activityPlan.idActivityPlan
+                            );
+                          }
+                        });
+                      }}
+                    >
+                      <Button type="submit" variant="danger">
+                        Eliminar
+                      </Button>
+                    </Form>
                   </div>
-                  
                 </tr>
               ))}
             </tbody>
@@ -240,8 +230,8 @@ console.log(datosActividadPlan)
             </Modal.Header>
             <Modal.Body>
               Al momento de confirmar el envío, las actividades ingresadas seran
-              enviadas a revision.
-              Tenga en cuenta que cuando se envían las actividades ya no podrá agregar más ni editar actividades.
+              enviadas a revision. Tenga en cuenta que cuando se envían las
+              actividades ya no podrá agregar más ni editar actividades.
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>

@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import Error from "../components/Error";
 
 const token = sessionStorage.getItem("token");
-const variableEdit = process.env.REACT_APP_API_GENERAL + "/activityPlanAccrual";
+const variableEdit = "https://accrual.up.railway.app/activityPlanAccrual";
 
 export async function loader({ params }) {
   const actividades = await obtenerActividades(params.actividadId);
@@ -85,16 +85,15 @@ export async function action({ request, params }) {
       },
       body: JSON.stringify(datos),
     });
-    console.log(respuesta.status)
+    
     if (respuesta.ok) {
       await Swal.fire({
         title: "Actualizado",
         text: "La actividad se ha actualizado, si requiere enviarlo, diríjase a 'Ver' ",
         icon: "success",
-        showCancelButton: true,
+     
         confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Cerrar",
+        
       });
       window.location.href = "/mostrarActividades";
     } else {

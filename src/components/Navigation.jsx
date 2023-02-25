@@ -8,7 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 
 const token = sessionStorage.getItem("token");
-const variableFiniquito =   process.env.REACT_APP_API_GENERAL +"/accrualData/settlement";
+const variableFiniquito = "https://accrual.up.railway.app/accrualData/settlement";
 const idPersona = sessionStorage.getItem("idPersona")
 
 

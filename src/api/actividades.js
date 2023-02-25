@@ -1,8 +1,8 @@
 import Swal from "sweetalert2";
 
-const variableObtenerActividades = process.env.REACT_APP_API_GENERAL + "/activityPlan";
-const variableObtenerInstitucion = process.env.REACT_APP_API_GENERAL +"/institution/withDetailsByIdActivityPlan"
-const variableEliminarActividad = process.env.REACT_APP_API_GENERAL+ "/activityPlanAccrual"
+const variableObtenerActividades = "https://accrual.up.railway.app/activityPlan";
+const variableObtenerInstitucion = "https://accrual.up.railway.app/institution/withDetailsByIdActivityPlan"
+const variableEliminarActividad = "https://accrual.up.railway.app/activityPlanAccrual"
 const token = sessionStorage.getItem("token")
 
 export async function obtenerActividades(id){
