@@ -12,7 +12,6 @@ const token = sessionStorage.getItem("token");
 const variableFiniquito = "https://accrual.up.railway.app/accrualData/settlement";
 const idPersona = sessionStorage.getItem("idPersona")
 
-
 function Navigation() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -81,7 +80,7 @@ function cerrar(){
             <Nav className="me-auto">
               <Link to="/index" className="nav-link">Inicio</Link>
 
-              <Link to="/datosDocente" className="nav-link">Datos xdxdxd</Link>
+              <Link to="/datosDocente" className="nav-link">Datos Docente</Link>
 
               <NavDropdown title="Plan Devengamiento" id="basic-nav-dropdown">
                 <NavDropdown.Item onClick={handleShow}>
@@ -100,7 +99,7 @@ function cerrar(){
                 <Modal.Body>
                   <p>
                     Cuando se solicita un finiquito, no se podrá ya registrar
-                    más periodos ni actividades.
+                    más actividades al periodo actual.
                   </p>
 
                   <p>
