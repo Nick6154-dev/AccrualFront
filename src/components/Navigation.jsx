@@ -22,7 +22,6 @@ function cerrar(){
   localStorage.clear();
   window.location.href = "/"
 }
-  
 
   async function handleSubmit() {
     try {
