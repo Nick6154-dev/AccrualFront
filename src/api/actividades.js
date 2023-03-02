@@ -44,7 +44,7 @@ export async function eliminarActividad (id){
       title: 'Actividad eliminada',
       icon: 'success',
     }).then(() => {
-      window.location.href = '/mostrarActividades';
+      window.location.reload();
     });   
   }else {
     await Swal.fire({

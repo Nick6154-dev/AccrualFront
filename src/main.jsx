@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {createBrowserRouter, RouterProvider} from "react-router-dom"
+import { createHashRouter, RouterProvider} from "react-router-dom"
 import Layout from '../src/components/Layout'
 import Login, {action as actionLogin} from '../src/pages/Login'
 import Index from '../src/pages/Home'
@@ -15,7 +15,7 @@ import MostrarActividades from "../src/components/MostrarActividades"
 import ErrorPage from '../src/components/ErrorPage'
 import {action as eliminarActividadAction} from '../src/components/MostrarActividades'
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
         path: "/",
         element: <Layout/>,
@@ -25,10 +25,6 @@ const router = createBrowserRouter([
                 element: <Login/>,
                 action: actionLogin,
                 errorElement: <ErrorPage/>
-            },
-            {
-                path: "/index",
-                element: <Index/>
             },
             {
                 path: "/datosDocente",
@@ -57,8 +53,13 @@ const router = createBrowserRouter([
                 path: "/actividades/:actividadId/eliminar",
                 action: eliminarActividadAction
             }
-        ]
-    }
+        ] 
+    },
+        {
+            path: "/index",
+            element: <Index/>
+        }  
+    
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(

@@ -1,5 +1,5 @@
 import FormularioLogin from "../components/FormularioLogin";
-import { Form } from "react-router-dom";
+import { Form, redirect } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const variable = "https://accrual.up.railway.app/accrual/authorization";
@@ -7,8 +7,6 @@ const variable = "https://accrual.up.railway.app/accrual/authorization";
 export async function action({ request }) {
   const formData = await request.formData();
   const datos = Object.fromEntries(formData);
-
-  console.log(datos);
 
   try {
     const respuesta = await fetch(variable, {
@@ -22,17 +20,17 @@ export async function action({ request }) {
 
     if (respuesta.ok) {
       const token = await respuesta.json();
-     
+
       const valorToken = token.token;
       sessionStorage.setItem("token", valorToken);
-      const periodo = "2022 - 2023"
+      const periodo = "2022-2023"
       localStorage.setItem("periodo", periodo);
       const partesToken = valorToken.split(".");
       const decoded = atob(partesToken[1]);
       const valorJson = JSON.parse(decoded);
       const idDocente = valorJson.sub;
       sessionStorage.setItem("idPersona", idDocente);
-      window.location.href = "/index";
+      return redirect("/index");
     } else {
       await Swal.fire({
         title: "Error",
@@ -42,8 +40,6 @@ export async function action({ request }) {
         confirmButtonText: "OK",
       });
     }
-
- 
 
   } catch (error) {
     console.error(error);
@@ -59,6 +55,7 @@ export async function action({ request }) {
 }
 
 function Login() {
+
   return (
     <div>
       <Form method="post">

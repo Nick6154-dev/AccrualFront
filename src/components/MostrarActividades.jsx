@@ -9,8 +9,7 @@ import { eliminarActividad } from "../api/actividades";
 import Swal from "sweetalert2";
 
 const token = sessionStorage.getItem("token");
-const idPlan = sessionStorage.getItem("idPlan");
-const period = "2022 - 2023";
+const period = "2022-2023";
 const idPerson = sessionStorage.getItem("idPersona");
 const variableObtenerActividades =
   "https://accrual.up.railway.app/activityPlan/byPlan";
@@ -20,10 +19,25 @@ const variableNoEditable =
 export async function action({ params }) {
   await eliminarActividad(params.actividadId);
 
-  return redirect("/mostrarActividades");
+  return redirect("/#/mostrarActividades");
 }
 
 function MostrarActividades() {
+
+  const [idPlan, setIdPlan] = useState(sessionStorage.getItem("idPlan"));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIdPlan(sessionStorage.getItem("idPlan"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -85,7 +99,7 @@ function MostrarActividades() {
 
           confirmButtonColor: "#3085d6",
         });
-        window.location.href = "/mostrarActividades";
+        window.location.href = "/#/mostrarActividades";
       } else {
         await Swal.fire({
           title: "Error",

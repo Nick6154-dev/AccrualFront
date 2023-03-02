@@ -11,13 +11,14 @@ const token = sessionStorage.getItem("token");
 
 const variable = "https://accrual.up.railway.app/person";
 const variableDatosDocente = "https://accrual.up.railway.app/docent/byIdPerson";
-const variableDatosDevengamiento ="https://accrual.up.railway.app/accrualData/ByIdPerson";
+const variableDatosDevengamiento = "https://accrual.up.railway.app/accrualData/ByIdPerson";
 const variableActualizarDevengamiento = "https://accrual.up.railway.app/accrualData";
-const variableRedes =  "https://accrual.up.railway.app/network/byIdPerson";
+const variableRedes = "https://accrual.up.railway.app/network/byIdPerson";
 const variableActualizarRedes = "https://accrual.up.railway.app/network";
 const variableObservaciones = "https://accrual.up.railway.app/accrualData/observation"
 
 function MostrarDatosDocente() {
+
   const [idAccrualData, setIdAccrualData] = useState("");
   const [idNetwork, setIdNetwork] = useState("");
   const [docente, setDocente] = useState({});
@@ -36,17 +37,18 @@ function MostrarDatosDocente() {
         });
 
         const data1 = await response1.json();
-        
+
         setData([{ ...data1 }]);
-       
+
       } catch (error) {
         console.log(error);
       }
     };
     useEffect(() => {
       loader();
+
     }, []);
-   
+
     return data;
   };
   const useLoaderData2 = () => {
@@ -106,7 +108,7 @@ function MostrarDatosDocente() {
         const fechaLecturaTesisAnio = dataDevengamiento.readingThesisDate[0];
         const fechaLecturaTesisMes = dataDevengamiento.readingThesisDate[1];
         const fechaLecturaTesisDia = dataDevengamiento.readingThesisDate[2];
-        
+
         const fechaLecturaTesis =
           fechaLecturaTesisDia +
           "/" +
@@ -160,8 +162,8 @@ function MostrarDatosDocente() {
         setRediCedia(dataRedes.cedia);
         setSenescyt(dataRedes.rniSenesyt);
         setOrcid(dataRedes.orcidCode);
-        
-        
+
+
         setData4([{ ...dataRedes }]);
       } catch (error) {
         console.log(error);
@@ -224,7 +226,7 @@ function MostrarDatosDocente() {
       );
       await respuestaActualizar.json();
       if (respuestaActualizar.ok) {
-      
+
         await Swal.fire({
           title: "Enviado",
           text: "La observación ha sido enviada correctamente",
@@ -284,12 +286,12 @@ function MostrarDatosDocente() {
     }
   }
 
-  
+
   const datos = useLoaderData();
   const datosDocente = useLoaderData2();
   const datosDevengamiento = useLoaderData3();
   const datosRedes = useLoaderData4();
-  
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -389,7 +391,7 @@ function MostrarDatosDocente() {
               ))}
             </tbody>
           ) : (
-            <p>No existen datos del docente disponibles</p>
+            <p>No existen datos del docente registrado</p>
           )}
 
           <thead>
@@ -422,7 +424,7 @@ function MostrarDatosDocente() {
               ))}
             </tbody>
           ) : (
-            <p>No existen datos del docente disponibles</p>
+            <p>No existen datos del docente registrado</p>
           )}
         </Table>
       </div>
@@ -459,7 +461,7 @@ function MostrarDatosDocente() {
               ))}
             </tbody>
           ) : (
-            <p>No existen datos del docente disponibles</p>
+            <p>No existen datos del docente registrado</p>
           )}
           <thead>
             <th>Tiempo de Devengamiento</th>
@@ -484,127 +486,128 @@ function MostrarDatosDocente() {
                     <Button variant="primary" onClick={handleShowEditDev}>
                       Editar
                     </Button>
-                    <Modal show={showEditDev} onHide={handleCloseEditDev}>
-                      <Modal.Header closeButton>
-                        <Modal.Title>Datos de Devengamiento</Modal.Title>
-                      </Modal.Header>
+                  
+                  <Modal show={showEditDev} onHide={handleCloseEditDev}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Datos de Devengamiento</Modal.Title>
+                    </Modal.Header>
 
-                      <Modal.Body>
-                        <div className="container py-3  text-center ">
-                          <div className="card-body">
-                            <div>
-                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                                <label
-                                  className="p-2 col-form-label"
-                                  htmlFor="Enlace de la tesis"
-                                >
-                                  Enlace de la tesis
-                                </label>
-                                <div className="p-2 col-sm-8">
-                                  <input
-                                    className="form-control"
-                                    type="url"
-                                    placeholder="http://ejemplo.com"
-                                    value={enlaceTesis}
-                                    onChange={handleChangeEnlaceTesis}
-                                  ></input>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                              <label
-                                className="p-2 col-form-label"
-                                htmlFor="Fecha de lectura de la tesis"
-                              >
-                                Fecha de lectura de la tesis
-                              </label>
-                              <div className="p-2 col-sm-8">
-                                <input
-                                  type="date"
-                                  required={true}
-                                  id="Fecha de lectura de la tesis"
-                                  className="form-control"
-                                  value={fechaLectura}
-                                  onChange={handleChangeFechaLectura}
-                                />
-                              </div>
-                            </div>
-                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                              <label
-                                className="p-2 col-form-label"
-                                htmlFor="Fecha de reintegro"
-                              >
-                                Fecha de reintegro
-                              </label>
-                              <div className="p-2 col-sm-8">
-                                <input
-                                  type="date"
-                                  required={true}
-                                  id="Fecha de reintegro"
-                                  className="form-control"
-                                  value={fechaReintegro}
-                                  onChange={handleChangeFechaReintegro}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                                <label
-                                  className="p-2 col-form-label"
-                                  htmlFor="Enlace de la tesis"
-                                >
-                                  Tiempo de devengamiento (meses){" "}
-                                </label>
-                                <div className="p-2 col-sm-8">
-                                  <input
-                                    className="form-control"
-                                    type="number"
-                                    placeholder="0"
-                                    value={tiempoDevengamiento}
-                                    onChange={handleChangeTiempoDevengamiento}
-                                  />
-                                </div>
-                              </div>
-                            </div>
+                    <Modal.Body>
+                      <div className="container py-3  text-center ">
+                        <div className="card-body">
+                          <div>
                             <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
                               <label
                                 className="p-2 col-form-label"
                                 htmlFor="Enlace de la tesis"
                               >
-                                Enlace de Adenda o Contrato
+                                Enlace de la tesis
                               </label>
                               <div className="p-2 col-sm-8">
                                 <input
                                   className="form-control"
                                   type="url"
                                   placeholder="http://ejemplo.com"
-                                  value={enlaceAdendaContrato}
-                                  onChange={handleChangeEnlaceAdendaContrato}
+                                  value={enlaceTesis}
+                                  onChange={handleChangeEnlaceTesis}
+                                ></input>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                            <label
+                              className="p-2 col-form-label"
+                              htmlFor="Fecha de lectura de la tesis"
+                            >
+                              Fecha de lectura de la tesis
+                            </label>
+                            <div className="p-2 col-sm-8">
+                              <input
+                                type="date"
+                                required={true}
+                                id="Fecha de lectura de la tesis"
+                                className="form-control"
+                                value={fechaLectura}
+                                onChange={handleChangeFechaLectura}
+                              />
+                            </div>
+                          </div>
+                          <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                            <label
+                              className="p-2 col-form-label"
+                              htmlFor="Fecha de reintegro"
+                            >
+                              Fecha de reintegro
+                            </label>
+                            <div className="p-2 col-sm-8">
+                              <input
+                                type="date"
+                                required={true}
+                                id="Fecha de reintegro"
+                                className="form-control"
+                                value={fechaReintegro}
+                                onChange={handleChangeFechaReintegro}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                              <label
+                                className="p-2 col-form-label"
+                                htmlFor="Enlace de la tesis"
+                              >
+                                Tiempo de devengamiento (meses){" "}
+                              </label>
+                              <div className="p-2 col-sm-8">
+                                <input
+                                  className="form-control"
+                                  type="number"
+                                  placeholder="0"
+                                  value={tiempoDevengamiento}
+                                  onChange={handleChangeTiempoDevengamiento}
                                 />
                               </div>
                             </div>
                           </div>
+                          <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                            <label
+                              className="p-2 col-form-label"
+                              htmlFor="Enlace de la tesis"
+                            >
+                              Enlace de Adenda o Contrato
+                            </label>
+                            <div className="p-2 col-sm-8">
+                              <input
+                                className="form-control"
+                                type="url"
+                                placeholder="http://ejemplo.com"
+                                value={enlaceAdendaContrato}
+                                onChange={handleChangeEnlaceAdendaContrato}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </Modal.Body>
+                      </div>
+                    </Modal.Body>
 
-                      <Modal.Footer>
-                        <Button
-                          variant="secondary"
-                          onClick={handleCloseEditDev}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button variant="primary" onClick={handleSubmit}>
-                          Enviar
-                        </Button>
-                      </Modal.Footer>
-                    </Modal>
+                    <Modal.Footer>
+                      <Button
+                        variant="secondary"
+                        onClick={handleCloseEditDev}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button variant="primary" onClick={handleSubmit}>
+                        Enviar
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
                   </td>
                 </tr>
               ))}
             </tbody>
           ) : (
-            <p>No existen datos del docente disponibles</p>
+            <p>No existen datos del docente registrado</p>
           )}
         </Table>
       </div>
@@ -741,7 +744,7 @@ function MostrarDatosDocente() {
               ))}
             </tbody>
           ) : (
-            <p>No existen datos del docente disponibles</p>
+            <p>No existen datos del docente registrados</p>
           )}
         </Table>
       </div>
@@ -763,7 +766,7 @@ function MostrarDatosDocente() {
                   Comentar si existe alguna novedad con los datos para
                   modificarlos
                 </Form.Label>
-                <textarea   value={observaciones} onChange={handleChangeObservaciones} className="form-control" maxLength={80}/>
+                <textarea value={observaciones} onChange={handleChangeObservaciones} className="form-control" maxLength={80} />
               </Form.Group>
             </Form>
           </Modal.Body>

@@ -76,7 +76,7 @@ console.log(datos);
         cancelButtonText: "Cerrar",
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = "/nuevaActividad";
+          window.location.reload();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           setTimeout(function () {}, 1);
         }

@@ -115,8 +115,8 @@ function cerrar(){
                 title="Actividad Devengamiento"
                 id="basic-nav-dropdown"
               >
-                <Link to="/nuevaActividad" className="dropdown-item">Nueva Actividad</Link>
-                <Link to="/MostrarActividades" className="dropdown-item">Mostrar Actividades</Link>
+                <Link to="/nuevaActividad" className="dropdown-item">Agregar</Link>
+                <Link to="/MostrarActividades" className="dropdown-item">Mostrar </Link>
               </NavDropdown>
               <Nav.Link onClick={cerrar}>Cerrar Sesión</Nav.Link>
             </Nav>

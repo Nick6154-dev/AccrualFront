@@ -478,7 +478,7 @@ function FormularioNuevaActividad({actividad}) {
               keyboard={false}
             >
               <Modal.Header closeButton>
-                <Modal.Title> Actividad Innovacion</Modal.Title>
+                <Modal.Title> Actividad Innovación</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">

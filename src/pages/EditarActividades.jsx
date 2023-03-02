@@ -95,7 +95,7 @@ export async function action({ request, params }) {
         confirmButtonColor: "#3085d6",
         
       });
-      window.location.href = "/mostrarActividades";
+      window.location.href = "/#/mostrarActividades";
     } else {
       await Swal.fire({
         title: "Error",
