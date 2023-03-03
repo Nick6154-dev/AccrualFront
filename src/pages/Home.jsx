@@ -76,6 +76,7 @@ function Home() {
           </div>
         </div>
       </header>
+      <Navigation />
       <div className="container-md py-4">
         <h4 className="text text-center">
           Bienvenido al Sistema de Seguimiento a Devengamientos de los Docentes
@@ -88,7 +89,6 @@ function Home() {
             de devengamiento en el periodo actual.
           </Alert>
           <Button id="boton" onClick={handleIdPlan} variant="primary">Aceptar</Button>
-          
         </div>
       </div>
       <div className="row justify-content-md-center align-items-center m-5 border border-secondar">
