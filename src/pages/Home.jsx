@@ -1,67 +1,70 @@
 import image from "../img/uce.png";
 import Navigation from "../components/Navigation";
-import Alert from "react-bootstrap/Alert";
-import { redirect } from "react-router-dom";
-import Button from 'react-bootstrap/Button';
-import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
 
-const token = sessionStorage.getItem("token");
+import { useEffect, useState } from "react";
 
 const period = "2022-2023";
 const obteneridPlan = "https://accrual.up.railway.app/plan/byIdPersonPeriod";
 
 
-const idPersona = sessionStorage.getItem("idPersona");
-
-const useLoaderData2 = () => {
-
-  const [data2, setData2] = useState();
-  const loader2 = async () => {
-    try {
-      const response1 = await fetch(`${obteneridPlan}/${idPersona},${"2022-2023"}`, {
-        method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response1.json();
-      sessionStorage.setItem("idPlan", data);
-      setData2(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    loader2();
-  }, [data2]);
-  return data2;
-};
-
 function Home() {
 
-  const idPlan = useLoaderData2();
+//Obtenemos el Token con estado
+const [token, setToken] = useState(sessionStorage.getItem("token"));
+useEffect(() => {
+  const handleStorageChange = () => {
+    setToken(sessionStorage.getItem("token"));
+  };
 
-  function handleIdPlan() {
-    Swal.fire({
-      title: "Listo",
-      text: "Ya puede ingresar las actividades de devengamiento",
-      icon: "success",
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Confirmar",
-    }).then((result) => {
-      if (result.isConfirmed) { 
-        
-        window.location.reload(true);
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
+
+  //Obtenemos el idPersona con estado
+  const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIdPersona(sessionStorage.getItem("idPersona"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+
+  //Hacemos la consulta para obtener el idPlan
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${obteneridPlan}/${idPersona},${"2022-2023"}`, {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          sessionStorage.setItem('idPlan', JSON.stringify(data));
+        } else {
+          throw new Error('Error en la consulta Fetch');
+        }
+      } catch (error) {
+        console.error(error);
       }
-    });
-  }
+    };
 
-  return (
+    fetchData();
+  }, []);
+   return (
     <div>
       <header className="header">
         <div className=" text-right">
@@ -81,15 +84,7 @@ function Home() {
         <h4 className="text text-center">
           Bienvenido al Sistema de Seguimiento a Devengamientos de los Docentes
         </h4>
-        <div className="d-flex flex-column justify-content-center align-items-center py-5 ">
-          <Alert variant="primary" className=" col-sm-5 text-center">
-            Usted se encuentra en el periodo: <h3>{period}</h3>
-            <br></br>
-            Antes de continuar, debe aceptar que está de acuerdo en ingresar las actividades
-            de devengamiento en el periodo actual.
-          </Alert>
-          <Button id="boton" onClick={handleIdPlan} variant="primary">Aceptar</Button>
-        </div>
+       
       </div>
       <div className="row justify-content-md-center align-items-center m-5 border border-secondar">
         <div className="col-md-auto m-5 image">

@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 const variableObtenerActividades = "https://accrual.up.railway.app/activityPlan";
 const variableObtenerInstitucion = "https://accrual.up.railway.app/institution/withDetailsByIdActivityPlan"
 const variableEliminarActividad = "https://accrual.up.railway.app/activityPlanAccrual"
-const token = sessionStorage.getItem("token")
 
 export async function obtenerActividades(id){
      const response = await fetch(`${variableObtenerActividades}/${id}`, {
@@ -29,7 +28,7 @@ export async function obtenerActividades(id){
     return data;
 }
 
-export async function eliminarActividad (id){
+export async function eliminarActividad (id, token){
   const response3 = await fetch(`${variableEliminarActividad}/${id}`, {
     method: "DELETE",
     mode: "cors",
@@ -56,4 +55,3 @@ export async function eliminarActividad (id){
     });
   }
 }
-

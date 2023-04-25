@@ -21,7 +21,7 @@ export async function action({ request }) {
     if (respuesta.ok) {
       const token = await respuesta.json();
 
-      const valorToken = token.token;
+      var valorToken = token.token;
       sessionStorage.setItem("token", valorToken);
       const periodo = "2022-2023"
       localStorage.setItem("periodo", periodo);

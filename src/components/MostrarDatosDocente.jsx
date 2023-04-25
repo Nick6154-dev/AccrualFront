@@ -6,7 +6,9 @@ import Modal from "react-bootstrap/Modal";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-const idPersona = sessionStorage.getItem("idPersona");
+
+
+function MostrarDatosDocente() {
 const token = sessionStorage.getItem("token");
 
 const variable = "https://accrual.up.railway.app/person";
@@ -17,12 +19,25 @@ const variableRedes = "https://accrual.up.railway.app/network/byIdPerson";
 const variableActualizarRedes = "https://accrual.up.railway.app/network";
 const variableObservaciones = "https://accrual.up.railway.app/accrualData/observation"
 
-function MostrarDatosDocente() {
+//Obtener el idPersona con estado
+  const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIdPersona(sessionStorage.getItem("idPersona"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const [idAccrualData, setIdAccrualData] = useState("");
   const [idNetwork, setIdNetwork] = useState("");
   const [docente, setDocente] = useState({});
   const [observaciones, setObservaciones] = useState("");
+
   const useLoaderData = () => {
     const [data, setData] = useState({});
     const loader = async () => {

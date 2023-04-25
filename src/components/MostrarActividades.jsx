@@ -8,9 +8,9 @@ import { useNavigate, redirect } from "react-router-dom";
 import { eliminarActividad } from "../api/actividades";
 import Swal from "sweetalert2";
 
-const token = sessionStorage.getItem("token");
 const period = "2022-2023";
-const idPerson = sessionStorage.getItem("idPersona");
+var token = localStorage.getItem("token");
+console.log(token);
 const variableObtenerActividades =
   "https://accrual.up.railway.app/activityPlan/byPlan";
 const variableNoEditable =
@@ -24,8 +24,35 @@ export async function action({ params }) {
 
 function MostrarActividades() {
 
-  const [idPlan, setIdPlan] = useState(sessionStorage.getItem("idPlan"));
+  //Obtenemos el Token con estado
+const [token, setToken] = useState(sessionStorage.getItem("token"));
+useEffect(() => {
+  const handleStorageChange = () => {
+    setToken(sessionStorage.getItem("token"));
+  };
 
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
+
+//Obtenemos el idPersona con estado
+const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
+useEffect(() => {
+  const handleStorageChange = () => {
+    setIdPersona(sessionStorage.getItem("idPersona"));
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
+//Obtenemos el idPlan con estado
+  const [idPlan, setIdPlan] = useState(sessionStorage.getItem("idPlan"));
   useEffect(() => {
     const handleStorageChange = () => {
       setIdPlan(sessionStorage.getItem("idPlan"));
@@ -76,6 +103,7 @@ function MostrarActividades() {
 
   // Obtener datos del editar actividad
   const datosActividadPlan = useLoaderData1();
+
   //Enviar actividades
   async function handleEnviar() {
     try {
@@ -211,7 +239,7 @@ function MostrarActividades() {
                         }).then(async (result) => {
                           if (result.isConfirmed) {
                             await eliminarActividad(
-                              actividades.activityPlan.idActivityPlan
+                              actividades.activityPlan.idActivityPlan, token
                             );
                           }
                         });

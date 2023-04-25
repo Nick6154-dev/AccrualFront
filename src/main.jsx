@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { createHashRouter, RouterProvider} from "react-router-dom"
 import Layout from '../src/components/Layout'
 import Login, {action as actionLogin} from '../src/pages/Login'
-import Index from '../src/pages/Home'
+import Home from './pages/Home'
 import MostrarDatosDocente from '../src/components/MostrarDatosDocente'
 import NuevaActividadDevengamiento, {action as actionActividadDevengamiento} from '../src/pages/NuevaActividadDevengamiento'
 import EditarActividades, {
@@ -57,7 +57,7 @@ const router = createHashRouter([
     },
         {
             path: "/index",
-            element: <Index/>
+            element: <Home/>
         }  
     
 ])
