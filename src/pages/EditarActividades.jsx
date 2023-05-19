@@ -8,7 +8,7 @@ const token = sessionStorage.getItem("token");
 const variableEdit = "https://accrual.up.railway.app/activityPlanAccrual";
 
 export async function loader({ params }) {
-  const actividades = await obtenerActividades(params.actividadId);
+  const actividades = await obtenerActividades(params.actividadId, token);
 
   let idActivityPlan = sessionStorage.setItem(
     "idActivityPlan",
@@ -74,7 +74,6 @@ export async function action({ request, params }) {
   }
 
   //Actualizar Actividad
-
   try {
     const respuesta = await fetch(`${variableEdit}/${params.actividadId}`, {
       method: "PUT",
@@ -119,6 +118,7 @@ export async function action({ request, params }) {
 }
 
 function EditarActividades() {
+  
   const actividades = useLoaderData();
   const errores = useActionData();
   return (

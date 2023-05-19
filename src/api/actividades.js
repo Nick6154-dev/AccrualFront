@@ -4,7 +4,7 @@ const variableObtenerActividades = "https://accrual.up.railway.app/activityPlan"
 const variableObtenerInstitucion = "https://accrual.up.railway.app/institution/withDetailsByIdActivityPlan"
 const variableEliminarActividad = "https://accrual.up.railway.app/activityPlanAccrual"
 
-export async function obtenerActividades(id){
+export async function obtenerActividades(id, token){
      const response = await fetch(`${variableObtenerActividades}/${id}`, {
         method: "GET",
         mode: "cors",

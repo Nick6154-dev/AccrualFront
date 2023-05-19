@@ -5,13 +5,25 @@ import Navigation from "./Navigation";
 import Alert from "react-bootstrap/Alert";
 const periodo = localStorage.getItem("periodo");
 
-const token = sessionStorage.getItem("token");
 const variableTipoActividad = "https://accrual.up.railway.app/type";
 const variableFacultad = "https://accrual.up.railway.app/faculty/byIdUniversity";
 const variableCarrera ="https://accrual.up.railway.app/career/byIdFaculty";
 const variableSubTipo = "https://accrual.up.railway.app/subtype/byIdType";
 
 function FormularioNuevaActividad({actividad}) {
+  //Obtenemos el Token con estado
+const [token, setToken] = useState(sessionStorage.getItem("token"));
+useEffect(() => {
+  const handleStorageChange = () => {
+    setToken(sessionStorage.getItem("token"));
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
   const [estadoModal1, cambiarEstadoModal1] = useState(false);
   const [estadoModal2, cambiarEstadoModal2] = useState(false);
   const [estadoModal3, cambiarEstadoModal3] = useState(false);
