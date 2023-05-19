@@ -3,7 +3,7 @@ import { Modal } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Navigation from "./Navigation";
 import Alert from "react-bootstrap/Alert";
-const periodo = localStorage.getItem("periodo");
+
 
 const variableTipoActividad = "https://accrual.up.railway.app/type";
 const variableFacultad = "https://accrual.up.railway.app/faculty/byIdUniversity";
@@ -24,6 +24,21 @@ useEffect(() => {
     window.removeEventListener("storage", handleStorageChange);
   };
 }, []);
+
+//Obtenemos el periodo con estado
+const [periodo, setPeriodo] = useState(localStorage.getItem("periodo"));
+useEffect(() => {
+  const handleStorageChange = () => {
+    setPeriodo(localStorage.getItem("periodo"));
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
+
   const [estadoModal1, cambiarEstadoModal1] = useState(false);
   const [estadoModal2, cambiarEstadoModal2] = useState(false);
   const [estadoModal3, cambiarEstadoModal3] = useState(false);

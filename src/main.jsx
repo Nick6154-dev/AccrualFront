@@ -8,8 +8,7 @@ import Home from './pages/Home'
 import MostrarDatosDocente from '../src/components/MostrarDatosDocente'
 import NuevaActividadDevengamiento, {action as actionActividadDevengamiento} from '../src/pages/NuevaActividadDevengamiento'
 import EditarActividades, {
-    loader as editarActividadesLoader,
-    action as actionEditarActividades
+    action as actionEditarActividades, loader as loaderEditar
 } from '../src/pages/EditarActividades'
 import MostrarActividades from "../src/components/MostrarActividades"
 import ErrorPage from '../src/components/ErrorPage'
@@ -45,8 +44,8 @@ const router = createHashRouter([
             }, {
                 path: "/actividades/:actividadId/editar",
                 element: <EditarActividades/>,
-                loader: editarActividadesLoader,
                 action: actionEditarActividades,
+                loader: loaderEditar,
                 errorElement: <ErrorPage/>
             },
             {

@@ -6,10 +6,21 @@ import Modal from "react-bootstrap/Modal";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-
-
 function MostrarDatosDocente() {
-const token = sessionStorage.getItem("token");
+  
+    //Obtenemos el Token con estado
+const [token, setToken] = useState(sessionStorage.getItem("token"));
+useEffect(() => {
+  const handleStorageChange = () => {
+    setToken(sessionStorage.getItem("token"));
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
 
 const variable = "https://accrual.up.railway.app/person";
 const variableDatosDocente = "https://accrual.up.railway.app/docent/byIdPerson";

@@ -1,19 +1,15 @@
 import { obtenerActividades } from "../api/actividades";
 import { Form, useActionData, useLoaderData } from "react-router-dom";
+import { useState, useEffect } from "react";
 import FormularioNuevaActividad from "../components/FormularioNuevaActividad";
 import Swal from "sweetalert2";
 import Error from "../components/Error";
 
-const token = sessionStorage.getItem("token");
 const variableEdit = "https://accrual.up.railway.app/activityPlanAccrual";
 
+const token = sessionStorage.getItem("token");
 export async function loader({ params }) {
   const actividades = await obtenerActividades(params.actividadId, token);
-
-  let idActivityPlan = sessionStorage.setItem(
-    "idActivityPlan",
-    params.actividadId
-  );
 
   if (Object.values(actividades).length === 0) {
     throw new Response("", {
@@ -60,8 +56,6 @@ export async function action({ request, params }) {
     datos.institutionName = nombreOtraInstitucion;
   }
 
-  console.log(datos);
-
   //Validacion
   const errores = [];
   if (Object.values(datos).includes("")) {
@@ -84,15 +78,15 @@ export async function action({ request, params }) {
       },
       body: JSON.stringify(datos),
     });
-    
+
     if (respuesta.ok) {
       await Swal.fire({
         title: "Actualizado",
         text: "La actividad se ha actualizado, si requiere enviarlo, diríjase a 'Ver' ",
         icon: "success",
-     
+
         confirmButtonColor: "#3085d6",
-        
+
       });
       window.location.href = "/#/mostrarActividades";
     } else {
@@ -118,9 +112,41 @@ export async function action({ request, params }) {
 }
 
 function EditarActividades() {
-  
+
+  //Obtenemos el Token con estado
+  const [token, setToken] = useState(sessionStorage.getItem("token"));
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(sessionStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   const actividades = useLoaderData();
   const errores = useActionData();
+
+
+// Dentro del componente EditarActividades
+useEffect(() => {
+  const handleStorageChange = () => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      obtenerActividades(id); // Llamar a la función con el nuevo token
+    }
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
+  
   return (
     <div>
       <Form method="post">

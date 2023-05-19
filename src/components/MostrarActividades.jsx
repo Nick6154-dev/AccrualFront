@@ -9,8 +9,7 @@ import { eliminarActividad } from "../api/actividades";
 import Swal from "sweetalert2";
 
 const period = "2022-2023";
-var token = localStorage.getItem("token");
-console.log(token);
+
 const variableObtenerActividades =
   "https://accrual.up.railway.app/activityPlan/byPlan";
 const variableNoEditable =
@@ -37,6 +36,8 @@ useEffect(() => {
     window.removeEventListener("storage", handleStorageChange);
   };
 }, []);
+
+console.log(token);
 
 //Obtenemos el idPersona con estado
 const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
@@ -103,7 +104,6 @@ useEffect(() => {
 
   // Obtener datos del editar actividad
   const datosActividadPlan = useLoaderData1();
-
   //Enviar actividades
   async function handleEnviar() {
     try {
