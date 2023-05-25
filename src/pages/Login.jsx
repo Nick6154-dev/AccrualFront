@@ -1,5 +1,7 @@
 import FormularioLogin from "../components/FormularioLogin";
 import { Form, redirect } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
+import { NavLink } from 'react-router-dom';
 import Swal from "sweetalert2";
 
 const variable = "https://accrual.up.railway.app/accrual/authorization";
@@ -60,13 +62,18 @@ function Login() {
     <div>
       <Form method="post">
         <FormularioLogin />
-        <div className="button-login text-center py-3">
+        <div className="button-login text-center py-1">
           <input
-            className=" btn btn-primary my-2 "
+            className=" btn btn-primary "
             type="submit"
             value="Ingresar"
           />
         </div>
+        <div className='my-4 text-center '>
+              <NavLink to="/solicitudRegistroDevengamiento">
+                <Button variant="link" className='link-registro'>Solicitud de registro de devengamiento</Button>
+              </NavLink>
+            </div>
       </Form>
     </div>
   );

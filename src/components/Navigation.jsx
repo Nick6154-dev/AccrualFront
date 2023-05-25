@@ -2,26 +2,58 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
-const token = sessionStorage.getItem("token");
 const variableFiniquito = "https://accrual.up.railway.app/accrualData/settlement";
 const idPersona = sessionStorage.getItem("idPersona")
 
 function Navigation() {
+
+  //Obtenemos el Token con estado
+  const [token, setToken] = useState(sessionStorage.getItem("token"));
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(sessionStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+
+  // Función para obtener el rol del token
+  const obtenerRolDelToken = () => {
+    const token = sessionStorage.getItem("token");
+
+    if (token) {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (payload.authorities) {
+        const authorities = JSON.parse(payload.authorities);
+        if (Array.isArray(authorities) && authorities.length > 0) {
+          return authorities[0].authority;
+        }
+      }
+    }
+
+    return null;
+  };
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-function cerrar(){
-  sessionStorage.clear();
-  localStorage.clear();
-  window.location.href = "/"
-}
+  function cerrar() {
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.href = "/"
+  }
 
   async function handleSubmit() {
     try {
@@ -40,7 +72,7 @@ function cerrar(){
       );
       await respuesta.json();
       if (respuesta.ok) {
-      
+
         await Swal.fire({
           title: "Enviado",
           text: "La solicitud ha sido enviada correctamente",
@@ -70,6 +102,9 @@ function cerrar(){
       });
     }
   }
+  // Obtener el rol del token
+  const rol = obtenerRolDelToken();
+
   return (
     <div>
       <Navbar bg="light" expand="lg">
@@ -86,6 +121,8 @@ function cerrar(){
                   Solicitud de Finiquito
                 </NavDropdown.Item>
               </NavDropdown>
+
+              
               <Modal
                 show={show}
                 onHide={handleClose}
@@ -118,6 +155,16 @@ function cerrar(){
                 <Link to="/nuevaActividad" className="dropdown-item">Agregar</Link>
                 <Link to="/MostrarActividades" className="dropdown-item">Mostrar </Link>
               </NavDropdown>
+              {rol === "ROLE_USER" && (
+                <NavDropdown
+                title="Validador"
+                id="basic-nav-dropdown"
+              >
+                <Link to="/nuevoDocente" className="dropdown-item">Nuevo Docente</Link>
+                <Link to="/revisarValidar" className="dropdown-item">Revisar y Validar </Link>
+                <Link to="/abrirCerrarPeriodos" className="dropdown-item">Abrir/Cerrar periodos </Link>
+              </NavDropdown>
+              )}
               <Nav.Link onClick={cerrar}>Cerrar Sesión</Nav.Link>
             </Nav>
           </Navbar.Collapse>

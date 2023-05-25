@@ -45,6 +45,7 @@ console.log(datos);
   const errores = [];
   if (Object.values(datos).includes("")) {
     errores.push("Todos los campos son obligatorios");
+    
   }
 
   //Retornar datos si hay errores

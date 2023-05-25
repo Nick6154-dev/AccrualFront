@@ -7,37 +7,37 @@ import Alert from "react-bootstrap/Alert";
 
 const variableTipoActividad = "https://accrual.up.railway.app/type";
 const variableFacultad = "https://accrual.up.railway.app/faculty/byIdUniversity";
-const variableCarrera ="https://accrual.up.railway.app/career/byIdFaculty";
+const variableCarrera = "https://accrual.up.railway.app/career/byIdFaculty";
 const variableSubTipo = "https://accrual.up.railway.app/subtype/byIdType";
 
-function FormularioNuevaActividad({actividad}) {
+function FormularioNuevaActividad({ actividad }) {
   //Obtenemos el Token con estado
-const [token, setToken] = useState(sessionStorage.getItem("token"));
-useEffect(() => {
-  const handleStorageChange = () => {
-    setToken(sessionStorage.getItem("token"));
-  };
+  const [token, setToken] = useState(sessionStorage.getItem("token"));
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(sessionStorage.getItem("token"));
+    };
 
-  window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
-  return () => {
-    window.removeEventListener("storage", handleStorageChange);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
-//Obtenemos el periodo con estado
-const [periodo, setPeriodo] = useState(localStorage.getItem("periodo"));
-useEffect(() => {
-  const handleStorageChange = () => {
-    setPeriodo(localStorage.getItem("periodo"));
-  };
+  //Obtenemos el periodo con estado
+  const [periodo, setPeriodo] = useState(localStorage.getItem("periodo"));
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setPeriodo(localStorage.getItem("periodo"));
+    };
 
-  window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
-  return () => {
-    window.removeEventListener("storage", handleStorageChange);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const [estadoModal1, cambiarEstadoModal1] = useState(false);
   const [estadoModal2, cambiarEstadoModal2] = useState(false);
@@ -206,7 +206,7 @@ useEffect(() => {
     <div>
       <Navigation />
       <div className="container py-3  text-center ">
-      <div className="d-flex flex-column justify-content-center align-items-center py-5 ">
+        <div className="d-flex flex-column justify-content-center align-items-center py-5 ">
           <Alert variant="primary" className=" col-sm-5 text-center">
             Usted se encuentra en el periodo: <h3>{periodo}</h3>
           </Alert>
@@ -214,7 +214,7 @@ useEffect(() => {
         <div className="card-header">
           <h3>Ingreso de datos de la Actividad</h3>
         </div>
-        
+
         <div className="card-body">
           <div>
             <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
@@ -230,14 +230,14 @@ useEffect(() => {
                   className="form-control"
                   required={true}
                   name="idActivityType"
-                  
+
                 >
                   <option className="text-center">*** Seleccione ***</option>
                   {tipoActividad.map((object) => (
                     <option
                       key={object.idActivityType}
                       value={object.idActivityType}
-                      defaultValue={actividad?.type.idActivityType} 
+                      defaultValue={actividad?.type.idActivityType}
                     >
                       {object.nameActivityType}
                     </option>
@@ -257,7 +257,7 @@ useEffect(() => {
                   id="starDate"
                   name="starDate"
                   className="form-control"
-                  defaultValue={actividad?.activity.startDate} 
+                  defaultValue={actividad?.activity.startDate}
                 />
               </div>
             </div>
@@ -273,7 +273,7 @@ useEffect(() => {
                   id="endDate"
                   name="endDate"
                   className="form-control"
-                  defaultValue={actividad?.activity.endDate} 
+                  defaultValue={actividad?.activity.endDate}
                 />
               </div>
             </div>
@@ -292,7 +292,7 @@ useEffect(() => {
                   id="descriptionActivity"
                   name="descriptionActivity"
                   className="form-control"
-                  defaultValue={actividad?.activity.description} 
+                  defaultValue={actividad?.activity.description}
                 />
               </div>
             </div>
@@ -308,7 +308,7 @@ useEffect(() => {
                   id="evidences"
                   name="evidences"
                   className="form-control"
-                  defaultValue={actividad?.activity.evidences} 
+                  defaultValue={actividad?.activity.evidences}
                 />
               </div>
             </div>

@@ -37,8 +37,6 @@ useEffect(() => {
   };
 }, []);
 
-console.log(token);
-
 //Obtenemos el idPersona con estado
 const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
 useEffect(() => {
