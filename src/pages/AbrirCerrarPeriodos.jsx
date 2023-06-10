@@ -30,6 +30,12 @@ function AbrirCerrarPeriodos() {
         setNuevoPeriodo(event.target.value);
     };
 
+    //Validar un solo periodo
+    const [existePeriodoActivo, setExistePeriodoActivo] = useState(false);
+
+    //Validar que se ingrese el periodo
+    const [errorFormato, setErrorFormato] = useState(false);
+
     //Obtenemos el Token con estado
     const [token, setToken] = useState(sessionStorage.getItem("token"));
     useEffect(() => {
@@ -61,6 +67,10 @@ function AbrirCerrarPeriodos() {
 
 
                 setDataPeriodo(data1);
+
+                const existeActivo = data1.some(periodo => periodo.active === true);
+                setExistePeriodoActivo(existeActivo);
+
             } catch (error) {
                 console.log(error);
             }
@@ -79,8 +89,48 @@ function AbrirCerrarPeriodos() {
         valuePeriod: nuevoPeriodo,
         active: null
     }
+
     //Agregar nuevo periodo
     async function handleNuevoPeriodo() {
+
+        //Validando que el periodo tenga el formato indicado
+        const formatoValido = /^\d{4}-\d{4}$/.test(nuevoPeriodo);
+
+        if (existePeriodoActivo) {
+            await Swal.fire({
+                title: "Error",
+                text: "No se puede agregar un nuevo periodo mientras hay un periodo activo",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK",
+            });
+            return;
+        }
+
+        if (!formatoValido) {
+            await Swal.fire({
+                title: "Error",
+                text: "El formato del nuevo periodo debe ser 'xxxx-xxxx'",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK",
+            });
+            return;
+        }
+        // Verificar si el nuevo período es igual a datosPeriodo.valuePeriod
+        const esIgual = dataPeriodo.some(periodo => periodo.valuePeriod === nuevoPeriodo);
+
+        if (esIgual) {
+            await Swal.fire({
+                title: "Error",
+                text: "El nuevo periodo debe ser diferente al periodo existente",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK",
+            });
+            return;
+        }
+
         try {
             const respuesta = await fetch(`${variableNuevoPeriodo}`, {
                 method: "POST",
@@ -277,12 +327,18 @@ function AbrirCerrarPeriodos() {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className="form-group m-2">
-                        <label htmlFor="nuevoPeriodo ">Ingresar el nuevo periodo </label>
-                        <input type="text" required className="form-control  my-3" id="nuevoPeriodo" placeholder="2022-2023"
+                    <div className={`form-group m-2 ${errorFormato ? 'has-error' : ''}`}>
+                        <label htmlFor="nuevoPeriodo">Ingresar el nuevo periodo</label>
+                        <input
+                            type="text"
+                            required
+                            className="form-control my-3"
+                            id="nuevoPeriodo"
+                            placeholder="2022-2023"
                             value={nuevoPeriodo}
-                            onChange={handleInputChange}
+                            onChange={event => setNuevoPeriodo(event.target.value)}
                         />
+
                     </div>
                 </Modal.Body>
 

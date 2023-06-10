@@ -71,7 +71,7 @@ function Login() {
         </div>
         <div className='my-4 text-center '>
               <NavLink to="/solicitudRegistroDevengamiento">
-                <Button variant="link" className='link-registro'>Solicitud de registro de devengamiento</Button>
+                <Button variant="link" className='link-registro'>Solicitud de registro en el sistema</Button>
               </NavLink>
             </div>
       </Form>

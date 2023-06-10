@@ -173,7 +173,6 @@ function VerPeriodos() {
     ];
 
 
-
     const transformedData = dataPeriodos.flatMap((periodo, index) => {
         return periodo.plans.map((plan, planIndex) => {
             let stateText = "";

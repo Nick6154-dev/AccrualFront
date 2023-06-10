@@ -69,13 +69,10 @@ function RevisarValidar() {
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
                     const docente = dataDocentes[rowIndex];
-
-                    
-
                     const handleVerPeriodos = () => {
-                     sessionStorage.setItem("nombreDocente", docente.person.name);
-                     sessionStorage.setItem("apellidoDocente", docente.person.lastname);
-                     sessionStorage.setItem("cedula", docente.person.identification);
+                        sessionStorage.setItem("nombreDocente", docente.person.name);
+                        sessionStorage.setItem("apellidoDocente", docente.person.lastname);
+                        sessionStorage.setItem("cedula", docente.person.identification);
                         navigate(`/periodos/${docente.person.idPerson}/ver`);
                     };
 
@@ -153,7 +150,7 @@ function RevisarValidar() {
                 <h3>Revisar / Validar</h3>
             </div>
             <MUIDataTable
-                title={<h3 style={titleStyles}>Listado de Docentes</h3>}
+                title={<h3 style={titleStyles}>Listado de docentes con plan registrado en el periodo</h3>}
                 data={transformedData}
                 columns={columns}
                 options={options}
