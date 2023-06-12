@@ -34,6 +34,8 @@ function AbrirCerrarPeriodos() {
     const [existePeriodoActivo, setExistePeriodoActivo] = useState(false);
     const [existePeriodoCerrado, setExistePeriodoCerrado] = useState(false);
 
+    const [ periodoActivo, setPeriodoActivo] = useState("");
+
     //Validar que se ingrese el periodo
     const [errorFormato, setErrorFormato] = useState(false);
 
@@ -69,7 +71,9 @@ function AbrirCerrarPeriodos() {
                 const existeActivo = data1.some(periodo => periodo.active === true);
                 setExistePeriodoActivo(existeActivo);
 
-
+                const periodosActivos = data1.filter(period => period.active)// Filtrar los períodos activos
+                    .map(period => period.valuePeriod).join(", "); // Obtener los valores de los períodos activos
+                localStorage.setItem("periodosAbiertos", periodosActivos );
             } catch (error) {
                 console.log(error);
             }
@@ -77,7 +81,6 @@ function AbrirCerrarPeriodos() {
         peticion();
 
     }, []);
-
 
     const handleShow = () => {
         setShow(true);

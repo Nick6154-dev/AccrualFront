@@ -15,7 +15,6 @@ function VerPeriodos() {
 
     //Obtener los valores de la consula de los periodos
     const [dataPeriodos, setDataPeriodos] = useState([]);
-
     const [idPlanObtenido, setIdPlanObtenido] = useState("");
 
     //Variables del modal
@@ -115,15 +114,46 @@ function VerPeriodos() {
     }, []);
 
 
-    console.log(idPlanObtenido)
     // Definimos las columnas
     const columns = [
-        { name: "#" },
-        { name: "Periodo" },
-        { name: "Estado" },
+        {
+            name: "#",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Periodo",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Estado",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
         {
             name: "Opción",
             options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
 
@@ -134,8 +164,6 @@ function VerPeriodos() {
                         setIdPlanObtenido(idPlanOpcion);
                         setShow2(true);
                     };
-
-
                     return (
                         <Button variant="link" onClick={handleShow2}>
                             Ver Actividades
@@ -148,6 +176,12 @@ function VerPeriodos() {
         {
             name: "Validación",
             options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
                     const plan = dataPeriodos[0].plans[rowIndex];
@@ -193,7 +227,7 @@ function VerPeriodos() {
             return [
                 planIndex + 1, // Columna #
                 plan.period.valuePeriod, // Columna Periodo
-                <span className="stateText">{stateText}</span>
+                <span >{stateText}</span>
             ];
         });
     });
@@ -261,8 +295,8 @@ function VerPeriodos() {
 
     //Descargar el Excel
     async function handleExcel() {
-     
-    
+
+
         fetch(`${variableExcel}/${idPersona},${idPlanObtenido}`, {
             method: 'POST',
             mode: 'cors',
@@ -280,11 +314,11 @@ function VerPeriodos() {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'ActivitiesPlan.xlsx');
+                link.setAttribute('download', `${nombres} ${" "}${apellidos}.xlsx`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-    
+
                 Swal.close();
             })
             .catch(error => {
@@ -296,7 +330,7 @@ function VerPeriodos() {
                 });
             });
     }
-                
+
     const dataNotificar = {
         idPlan: idPlanObtenido,
         starDate: null,
@@ -420,11 +454,11 @@ function VerPeriodos() {
                 </Modal.Header>
 
                 <Modal.Body>
-                   
+
                     <div className="form-group m-2">
                         <p>Se va a descargar una hoja Excel con las actividades.</p>
-                       <p>Presiona aceptar para ver las actividades.</p>
-                      
+                        <p>Presiona aceptar para ver las actividades.</p>
+
                     </div>
                 </Modal.Body>
 

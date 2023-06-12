@@ -8,7 +8,6 @@ import { useNavigate, redirect } from "react-router-dom";
 import { eliminarActividad } from "../api/actividades";
 import Swal from "sweetalert2";
 
-const period = "2022-2023";
 
 const variableObtenerActividades =
   "https://accrual.up.railway.app/activityPlan/byPlan";
@@ -22,6 +21,7 @@ export async function action({ params }) {
 }
 
 function MostrarActividades() {
+  const period = localStorage.getItem("periodosAbiertos");
 
   //Obtenemos el Token con estado
 const [token, setToken] = useState(sessionStorage.getItem("token"));
@@ -87,8 +87,6 @@ useEffect(() => {
         );
 
         const dataActividades = await response1.json();
-      
-
         setDataActividad(dataActividades);
       } catch (error) {
         console.log(error);
@@ -152,7 +150,7 @@ useEffect(() => {
     <div>
       <Navigation />
       <div className="p-3 m-3">
-        <h3 className="p-2">Actividades del periodo 2022-2023</h3>
+        <h3 className="p-2">Actividades del periodo {period}</h3>
         {datosActividadPlan.length ? (
           <Table striped>
             <thead>

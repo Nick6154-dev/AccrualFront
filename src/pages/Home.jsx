@@ -1,6 +1,7 @@
 import image from "../img/uce.png";
 import Navigation from "../components/Navigation";
 import { useEffect, useState } from "react";
+import Alert from "react-bootstrap/Alert";
 
 const obteneridPlan = "https://accrual.up.railway.app/plan/byIdPersonPeriod";
 
@@ -10,16 +11,8 @@ function Home() {
 
   //Obtenemos el Token con estado
   const token = sessionStorage.getItem("token");
-  const partesToken = token.split(".");
-  const decoded = atob(partesToken[1]);
-  const valorJson = JSON.parse(decoded);
-  const arregloPeriodos = JSON.parse(valorJson.periods);
-  const periodosAbiertos = arregloPeriodos[0].valuePeriod;
-  localStorage.setItem("periodosAbiertos", periodosAbiertos);
+  const periodosAbiertos = localStorage.getItem("periodosAbiertos");
 
-
-
-  console.log(periodosAbiertos);
 
   //Obtenemos el idPersona con estado
   const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
@@ -50,9 +43,8 @@ function Home() {
         });
         if (response.ok) {
           const data = await response.json();
-
-          console.log(data)
-          sessionStorage.setItem('idPlan', JSON.stringify(data));
+          
+          sessionStorage.setItem('idPlan', JSON.stringify(data.idPlan));
         } else {
           throw new Error('Error en la consulta Fetch');
         }
@@ -84,10 +76,21 @@ function Home() {
         <h4 className="text text-center">
           Bienvenido al Sistema de Seguimiento a Devengamientos de los Docentes
         </h4>
+      </div>
+      <div className="d-flex flex-column justify-content-center align-items-center ">
+        {periodosAbiertos === "" ? (
+          <Alert variant="danger" className="col-sm-3 text-center">
+            No existen periodos activos
+          </Alert>
+        ) : (
+          <Alert variant="primary" className="col-sm-3 text-center">
+           Periodo Activo: <h3>{periodosAbiertos}</h3>
+          </Alert>
+        )}
 
       </div>
-      <div className="row justify-content-md-center align-items-center m-5 border border-secondar">
-        <div className="col-md-auto m-5 image">
+      <div className="row justify-content-md-center align-items-center m-4 border border-secondar">
+        <div className="col-md-auto m-4 image">
           <img className=" p-1" src={image} alt="imagen uce" width="200" />
         </div>
         <div className="col col-lg-5">

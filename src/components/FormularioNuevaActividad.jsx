@@ -26,7 +26,7 @@ function FormularioNuevaActividad({ actividad }) {
   }, []);
 
   //Obtenemos el periodo con estado
-  const [periodo, setPeriodo] = useState(localStorage.getItem("periodo"));
+  const [periodo, setPeriodo] = useState(localStorage.getItem("periodosAbiertos"));
   useEffect(() => {
     const handleStorageChange = () => {
       setPeriodo(localStorage.getItem("periodo"));
@@ -207,9 +207,16 @@ function FormularioNuevaActividad({ actividad }) {
       <Navigation />
       <div className="container py-3  text-center ">
         <div className="d-flex flex-column justify-content-center align-items-center py-5 ">
-          <Alert variant="primary" className=" col-sm-5 text-center">
+        {periodo === "" ? (
+          <Alert variant="danger" className="col-sm-5 text-center">
+            No existen periodos activos
+          </Alert>
+        ) : (
+          <Alert variant="primary" className="col-sm-5 text-center">
             Usted se encuentra en el periodo: <h3>{periodo}</h3>
           </Alert>
+        )}
+
         </div>
         <div className="card-header">
           <h3>Ingreso de datos de la Actividad</h3>

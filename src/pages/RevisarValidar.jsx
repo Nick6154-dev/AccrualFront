@@ -112,14 +112,64 @@ function RevisarValidar() {
 
     // Definimos las columnas
     const columns = [
-        { name: "#" },
-        { name: "Cédula" },
-        { name: "Nombres" },
-        { name: "Apellidos" },
-        { name: "Facultad" },
+        {
+            name: "#",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Cédula",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Nombres",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Apellidos",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Facultad",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
         {
             name: "Acción",
             options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
                     const docente = dataDocentes[rowIndex];
