@@ -25,13 +25,14 @@ export async function action({ request }) {
 
       var valorToken = token.token;
       sessionStorage.setItem("token", valorToken);
-      const periodo = "2022-2023"
-      localStorage.setItem("periodo", periodo);
+      
       const partesToken = valorToken.split(".");
       const decoded = atob(partesToken[1]);
       const valorJson = JSON.parse(decoded);
+      
       const idDocente = valorJson.sub;
       sessionStorage.setItem("idPersona", idDocente);
+      
       return redirect("/index");
     } else {
       await Swal.fire({
@@ -70,10 +71,10 @@ function Login() {
           />
         </div>
         <div className='my-4 text-center '>
-              <NavLink to="/solicitudRegistroDevengamiento">
-                <Button variant="link" className='link-registro'>Solicitud de registro en el sistema</Button>
-              </NavLink>
-            </div>
+          <NavLink to="/solicitudRegistroDevengamiento">
+            <Button variant="link" className='link-registro'>Solicitud de registro en el sistema</Button>
+          </NavLink>
+        </div>
       </Form>
     </div>
   );

@@ -1,27 +1,25 @@
 import image from "../img/uce.png";
 import Navigation from "../components/Navigation";
-
 import { useEffect, useState } from "react";
 
-const period = "2022-2023";
 const obteneridPlan = "https://accrual.up.railway.app/plan/byIdPersonPeriod";
-
 
 function Home() {
 
-//Obtenemos el Token con estado
-const [token, setToken] = useState(sessionStorage.getItem("token"));
-useEffect(() => {
-  const handleStorageChange = () => {
-    setToken(sessionStorage.getItem("token"));
-  };
+  //variables  a useState
 
-  window.addEventListener("storage", handleStorageChange);
+  //Obtenemos el Token con estado
+  const token = sessionStorage.getItem("token");
+  const partesToken = token.split(".");
+  const decoded = atob(partesToken[1]);
+  const valorJson = JSON.parse(decoded);
+  const arregloPeriodos = JSON.parse(valorJson.periods);
+  const periodosAbiertos = arregloPeriodos[0].valuePeriod;
+  localStorage.setItem("periodosAbiertos", periodosAbiertos);
 
-  return () => {
-    window.removeEventListener("storage", handleStorageChange);
-  };
-}, []);
+
+
+  console.log(periodosAbiertos);
 
   //Obtenemos el idPersona con estado
   const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
@@ -42,7 +40,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${obteneridPlan}/${idPersona},${"2022-2023"}`, {
+        const response = await fetch(`${obteneridPlan}/${idPersona},${periodosAbiertos}`, {
           method: "GET",
           mode: "cors",
           headers: {
@@ -52,7 +50,8 @@ useEffect(() => {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
+
+          console.log(data)
           sessionStorage.setItem('idPlan', JSON.stringify(data));
         } else {
           throw new Error('Error en la consulta Fetch');
@@ -64,7 +63,8 @@ useEffect(() => {
 
     fetchData();
   }, []);
-   return (
+
+  return (
     <div>
       <header className="header">
         <div className=" text-right">
@@ -84,7 +84,7 @@ useEffect(() => {
         <h4 className="text text-center">
           Bienvenido al Sistema de Seguimiento a Devengamientos de los Docentes
         </h4>
-       
+
       </div>
       <div className="row justify-content-md-center align-items-center m-5 border border-secondar">
         <div className="col-md-auto m-5 image">

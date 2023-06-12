@@ -14,23 +14,10 @@ const idPersona = sessionStorage.getItem("idPersona")
 function Navigation() {
 
   //Obtenemos el Token con estado
-  const [token, setToken] = useState(sessionStorage.getItem("token"));
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setToken(sessionStorage.getItem("token"));
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
+  const token = sessionStorage.getItem("token");
 
   // Función para obtener el rol del token
   const obtenerRolDelToken = () => {
-    const token = sessionStorage.getItem("token");
 
     if (token) {
       const payload = JSON.parse(atob(token.split(".")[1]));
@@ -102,8 +89,10 @@ function Navigation() {
       });
     }
   }
+
   // Obtener el rol del token
   const rol = obtenerRolDelToken();
+
 
   return (
     <div>
@@ -155,7 +144,7 @@ function Navigation() {
                 <Link to="/nuevaActividad" className="dropdown-item">Agregar</Link>
                 <Link to="/MostrarActividades" className="dropdown-item">Mostrar </Link>
               </NavDropdown>
-              {rol === "ROLE_USER" && (
+              {rol === "ROLE_ADMIN" && (
                 <NavDropdown
                 title="Validador"
                 id="basic-nav-dropdown"

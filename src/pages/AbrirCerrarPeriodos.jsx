@@ -9,6 +9,8 @@ import Swal from "sweetalert2";
 const variableObtenerPeriodos = "https://accrual.up.railway.app/period";
 const variableNuevoPeriodo = "https://accrual.up.railway.app/period/save";
 const variableCerrarPeriodo = "https://accrual.up.railway.app/period/switchActivePeriod";
+const variableEliminarPeriodo = "https://accrual.up.railway.app/period/deletePeriodById";
+
 function AbrirCerrarPeriodos() {
 
     const [dataPeriodo, setDataPeriodo] = useState([]);
@@ -18,10 +20,8 @@ function AbrirCerrarPeriodos() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
 
-    //Variables del modal
     const [show2, setShow2] = useState(false);
     const handleClose2 = () => setShow2(false);
-
 
     // Variables datosModal
     const [nuevoPeriodo, setNuevoPeriodo] = useState('');
@@ -32,6 +32,7 @@ function AbrirCerrarPeriodos() {
 
     //Validar un solo periodo
     const [existePeriodoActivo, setExistePeriodoActivo] = useState(false);
+    const [existePeriodoCerrado, setExistePeriodoCerrado] = useState(false);
 
     //Validar que se ingrese el periodo
     const [errorFormato, setErrorFormato] = useState(false);
@@ -67,9 +68,10 @@ function AbrirCerrarPeriodos() {
 
 
                 setDataPeriodo(data1);
-
+                console.log(data1);
                 const existeActivo = data1.some(periodo => periodo.active === true);
                 setExistePeriodoActivo(existeActivo);
+              
 
             } catch (error) {
                 console.log(error);
@@ -174,8 +176,18 @@ function AbrirCerrarPeriodos() {
         return null;
     }
 
-    //Cerrar el periodo
+    // Abrir/Cerrar el periodo
     async function handleCerrar() {
+        if (existePeriodoActivo && !existePeriodoCerrado) {
+            await Swal.fire({
+                title: "Error",
+                text: "Ya existe un periodo abierto",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK",
+            });
+            return;
+        }
         try {
             const respuesta = await fetch(`${variableCerrarPeriodo}/${idPeriodo}`, {
                 method: "PATCH",
@@ -189,8 +201,8 @@ function AbrirCerrarPeriodos() {
 
             if (respuesta.ok) {
                 await Swal.fire({
-                    title: "Cerrado",
-                    text: "El periodo se ha cerrado",
+                    title: "Realizado",
+                    text: "El estado del periodo se ha modificado",
                     icon: "success",
 
                     confirmButtonColor: "#3085d6",
@@ -200,7 +212,7 @@ function AbrirCerrarPeriodos() {
             } else {
                 await Swal.fire({
                     title: "Error",
-                    text: "No se ha podido cerrar el periodo",
+                    text: "No se ha podido modificar el estado del periodo",
                     icon: "error",
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: "OK",
@@ -210,7 +222,7 @@ function AbrirCerrarPeriodos() {
             console.error(error);
             await Swal.fire({
                 title: "Error",
-                text: "Ocurrió un error al cerrar el periodo",
+                text: "Ocurrió un error al cambiar el estado del periodo",
                 icon: "error",
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "OK",
@@ -221,12 +233,44 @@ function AbrirCerrarPeriodos() {
 
     // Definimos las columnas
     const columns = [
-        { name: "#" },
-        { name: "Periodo" },
-        { name: "Estado" },
         {
-            name: "Opción",
+            name: "#",
             options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "PERIODO",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "ESTADO",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "OPCIÓN",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
                     const periodo = dataPeriodo[rowIndex];
@@ -234,15 +278,94 @@ function AbrirCerrarPeriodos() {
                     const handleShow2 = () => {
                         const idPeriodo = periodo.idPeriod;
                         setIdPeriodo(idPeriodo);
+                        const estadoPeriodoActual = periodo.active;
+                        setExistePeriodoCerrado(estadoPeriodoActual);
                         setShow2(true);
                     };
 
                     const isPeriodActive = periodo.active !== false;
 
                     return (
-                        <Button variant="danger" onClick={handleShow2} disabled={!isPeriodActive}>
-                            Cerrar Periodo
+                        <div>
+                            <Button variant="danger" onClick={handleShow2} disabled={!isPeriodActive}>
+                                Cerrar Periodo
+                            </Button>
+                            <Button className="mx-2" variant="success" disabled={isPeriodActive} onClick={handleShow2}>
+                                Abrir Periodo
+                            </Button>
+                        </div>
+                    );
+                },
+            },
+        },
+        {
+            name: "ACCIÓN",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    const rowIndex = tableMeta.rowIndex;
+                    const periodo = dataPeriodo[rowIndex];
+                    const handleEliminar = async () => {
+                        const result = await Swal.fire({
+                            title: '¿Está seguro?',
+                            text: 'Esta acción eliminará el período de forma permanente',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar',
+                        });
+
+                        if (result.isConfirmed) {
+                            try {
+                                const respuesta = await fetch(`${variableEliminarPeriodo}/${periodo.idPeriod}`, {
+                                    method: "DELETE",
+                                    mode: "cors",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                });
+
+                                if (respuesta.ok) {
+                                    await Swal.fire({
+                                        title: "Eliminado",
+                                        text: "El periodo se ha eliminado",
+                                        icon: "success",
+                                        confirmButtonColor: "#3085d6",
+                                    });
+                                    window.location.reload();
+                                } else {
+                                    await Swal.fire({
+                                        title: "Error",
+                                        text: "El periodo ya contiene planes, no se puede eliminar",
+                                        icon: "error",
+                                        confirmButtonColor: "#3085d6",
+                                        confirmButtonText: "OK",
+                                    });
+                                }
+                            } catch (error) {
+                                console.error(error);
+                                await Swal.fire({
+                                    title: "Error",
+                                    text: "Ocurrió un error al eliminar el periodo",
+                                    icon: "error",
+                                    confirmButtonColor: "#3085d6",
+                                    confirmButtonText: "OK",
+                                });
+                            }
+                        }
+                    };
+                    return (
+                        <Button variant="warning" onClick={handleEliminar} >
+                            Eliminar Periodo
                         </Button>
+
                     );
                 },
             },
@@ -261,12 +384,9 @@ function AbrirCerrarPeriodos() {
         responsive: "standard",
         selectableRows: "none",
         pagination: true,
+        sort: false,
         textLabels: {
-            body: {
-                noMatch: "No se encontraron registros",
-                toolTip: "Ordenar",
-                columnHeaderTooltip: column => `Ordenar por ${column.label}`
-            },
+
             pagination: {
                 next: "Siguiente",
                 previous: "Anterior",
@@ -294,6 +414,7 @@ function AbrirCerrarPeriodos() {
                 delete: "Eliminar",
                 deleteAria: "Eliminar filas seleccionadas",
             },
+
         },
     };
 
@@ -357,8 +478,9 @@ function AbrirCerrarPeriodos() {
                 <Modal.Body>
 
                     <div className="form-group m-2">
-                        <p>Cuando se cierra un periodo, este ya no podrá constar en el plan de devengamiento.</p>
-                        <p>Presiona aceptar para cerrar el periodo.</p>
+                        <p>Abrir/Cerrar periodos</p>
+                        <p>Recuerda que al cerrar el periodo, este no se podrá utilizar para los planes, por lo que tendrás que abrirlo para usarlo.</p>
+                        <p>Presiona aceptar para continuar.</p>
 
                     </div>
                 </Modal.Body>
@@ -369,6 +491,8 @@ function AbrirCerrarPeriodos() {
                 </Modal.Footer>
 
             </Modal>
+
+
         </div>
     )
 }
