@@ -65,13 +65,10 @@ function AbrirCerrarPeriodos() {
                     },
                 });
                 const data1 = await response.json();
-
-
                 setDataPeriodo(data1);
-                console.log(data1);
                 const existeActivo = data1.some(periodo => periodo.active === true);
                 setExistePeriodoActivo(existeActivo);
-              
+
 
             } catch (error) {
                 console.log(error);
@@ -287,12 +284,14 @@ function AbrirCerrarPeriodos() {
 
                     return (
                         <div>
-                            <Button variant="danger" onClick={handleShow2} disabled={!isPeriodActive}>
-                                Cerrar Periodo
-                            </Button>
-                            <Button className="mx-2" variant="success" disabled={isPeriodActive} onClick={handleShow2}>
-                                Abrir Periodo
-                            </Button>
+                            <div class="d-grid gap-2 d-sm-block">
+                                <Button variant="danger" className=" mx-1 btn-block" onClick={handleShow2} disabled={!isPeriodActive}>
+                                    Cerrar Periodo
+                                </Button>
+                                <Button variant="success" className="mx-2 btn-block" disabled={isPeriodActive} onClick={handleShow2}>
+                                    Abrir Periodo
+                                </Button>
+                            </div>
                         </div>
                     );
                 },

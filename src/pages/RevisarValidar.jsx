@@ -3,11 +3,20 @@ import { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
-
+import { IconButton } from '@mui/material';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+import Modal from 'react-bootstrap/Modal';
+import Swal from "sweetalert2";
 
 const variableObtenerDocentes = "https://accrual.up.railway.app/validator/findAllDocentPersonPlans";
-
+const variableAprobarPlanes = "https://accrual.up.railway.app/validator/approveAllPlans";
+const variableExcel = "https://accrual.up.railway.app/validator/generateExcelDocentsInPlan";
 function RevisarValidar() {
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     const navigate = useNavigate();
 
@@ -55,6 +64,51 @@ function RevisarValidar() {
 
     }, []);
 
+    // Aprobar todos los planes
+    async function handleAprobarPlanes() {
+
+        try {
+            const respuesta = await fetch(`${variableAprobarPlanes}`, {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+
+            });
+
+            if (respuesta.ok) {
+                await Swal.fire({
+                    title: "Realizado",
+                    text: "Todos los planes se han aprobado con éxito",
+                    icon: "success",
+
+                    confirmButtonColor: "#3085d6",
+
+                });
+                window.location.reload();
+            } else {
+                await Swal.fire({
+                    title: "Error",
+                    text: "No se ha podido aprobar todos los planes",
+                    icon: "error",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "OK",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            await Swal.fire({
+                title: "Error",
+                text: "Ocurrió un error al aprobar los planes",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK",
+            });
+        }
+        return null;
+    }
 
     // Definimos las columnas
     const columns = [
@@ -98,10 +152,57 @@ function RevisarValidar() {
         ];
     });
 
+    async function downloadDocentes() {
+        fetch(`${variableExcel}`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al generar el archivo Excel');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'ActivitiesPlan.xlsx');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                Swal.close();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ha ocurrido un error al generar el archivo Excel.',
+                    icon: 'error',
+                });
+            });
+    }
+
     const options = {
         responsive: "standard",
         selectableRows: "none",
         pagination: true,
+        customToolbar: () => {
+            return (
+                <div>
+                    <IconButton title="Aprobar todos los planes" onClick={handleShow}>
+                        <AddTaskIcon />
+                    </IconButton>
+                    <IconButton title="Descargar docentes que constan con un plan" onClick={downloadDocentes}>
+                        <SimCardDownloadIcon />
+                    </IconButton>
+                </div>
+            );
+        },
         textLabels: {
             body: {
                 noMatch: "No se encontraron registros",
@@ -120,7 +221,9 @@ function RevisarValidar() {
                 print: "Imprimir",
                 viewColumns: "Ver columnas",
                 filterTable: "Filtrar tabla",
+
             },
+
             filter: {
                 all: "Todos",
                 title: "FILTROS",
@@ -154,8 +257,28 @@ function RevisarValidar() {
                 data={transformedData}
                 columns={columns}
                 options={options}
-
             />
+
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmación</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+
+                    <div className="form-group m-2">
+                        <p>Ten en cuenta que al aceptar, todos los planes serán aprobados</p>
+                        <p>Presiona aceptar para continuar.</p>
+
+                    </div>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>Cerrar</Button>
+                    <Button variant="primary" onClick={handleAprobarPlanes} >Aceptar</Button>
+                </Modal.Footer>
+
+            </Modal>
         </div>
     )
 }
