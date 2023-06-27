@@ -5,32 +5,31 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import MUIDataTable from 'mui-datatables';
 
 function MostrarDatosDocente() {
+
+  //Obtenemos el Token con estado
+  const token = sessionStorage.getItem("token");
+
+  const variable = "https://accrual.up.railway.app/person";
+  const variableDatosDocente = "https://accrual.up.railway.app/docent/byIdPerson";
+  const variableDatosDevengamiento = "https://accrual.up.railway.app/accrualData/ByIdPerson";
+  const variableActualizarDevengamiento = "https://accrual.up.railway.app/accrualData";
+  const variableRedes = "https://accrual.up.railway.app/network/byIdPerson";
+  const variableActualizarRedes = "https://accrual.up.railway.app/network";
+  const variableObservaciones = "https://accrual.up.railway.app/accrualData/observation"
+
+
+  const [idAccrualData, setIdAccrualData] = useState("");
+  const [idNetwork, setIdNetwork] = useState("");
+  const [docente, setDocente] = useState({});
+  const [observaciones, setObservaciones] = useState("");
+
+  const [dataGenerales, setDataGenerales] = useState([]);
+  const [dataGenerales2, setDataGenerales2] = useState([]);
   
-    //Obtenemos el Token con estado
-const [token, setToken] = useState(sessionStorage.getItem("token"));
-useEffect(() => {
-  const handleStorageChange = () => {
-    setToken(sessionStorage.getItem("token"));
-  };
-
-  window.addEventListener("storage", handleStorageChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorageChange);
-  };
-}, []);
-
-const variable = "https://accrual.up.railway.app/person";
-const variableDatosDocente = "https://accrual.up.railway.app/docent/byIdPerson";
-const variableDatosDevengamiento = "https://accrual.up.railway.app/accrualData/ByIdPerson";
-const variableActualizarDevengamiento = "https://accrual.up.railway.app/accrualData";
-const variableRedes = "https://accrual.up.railway.app/network/byIdPerson";
-const variableActualizarRedes = "https://accrual.up.railway.app/network";
-const variableObservaciones = "https://accrual.up.railway.app/accrualData/observation"
-
-//Obtener el idPersona con estado
+  //Obtener el idPersona con estado
   const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
   useEffect(() => {
     const handleStorageChange = () => {
@@ -44,11 +43,8 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
     };
   }, []);
 
-  const [idAccrualData, setIdAccrualData] = useState("");
-  const [idNetwork, setIdNetwork] = useState("");
-  const [docente, setDocente] = useState({});
-  const [observaciones, setObservaciones] = useState("");
-
+  
+  //Obtener datos generales
   const useLoaderData = () => {
     const [data, setData] = useState({});
     const loader = async () => {
@@ -63,8 +59,7 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
         });
 
         const data1 = await response1.json();
-
-        setData([{ ...data1 }]);
+        setDataGenerales([data1]);
 
       } catch (error) {
         console.log(error);
@@ -77,6 +72,8 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
 
     return data;
   };
+
+  //Obtener datosGenerales2 del Docente
   const useLoaderData2 = () => {
     const [data2, setData2] = useState({});
     const loader2 = async () => {
@@ -91,8 +88,8 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
         });
 
         const dataDocente = await response2.json();
+        setDataGenerales2([dataDocente]);
 
-        setData2([{ ...dataDocente }]);
       } catch (error) {
         console.log(error);
       }
@@ -103,6 +100,7 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
     return data2;
   };
 
+  //Obtener datos de Devengamiento del Docente
   const useLoaderData3 = () => {
     const [data3, setData3] = useState({});
     const loader3 = async () => {
@@ -166,6 +164,7 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
     return data3;
   };
 
+  //Obtener datos de redes de los Docentes
   const useLoaderData4 = () => {
     const [data4, setData4] = useState({});
     const loader4 = async () => {
@@ -202,6 +201,7 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
     return data4;
   };
 
+  //Actualizar datos
   async function handleSubmit() {
     try {
       const respuestaActualizar = await fetch(
@@ -234,7 +234,7 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
     }
   }
 
-
+  //Enviar Observaciones
   async function handleSubmitObservaciones() {
     try {
       const respuestaActualizar = await fetch(
@@ -283,6 +283,7 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
     }
   }
 
+  //Actualizar datos de redes
   async function handleSubmitRedes() {
     try {
       const respuestaActualizar = await fetch(
@@ -376,83 +377,143 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
     setObservaciones(event.target.value);
   }
 
+  // Definimos las columnas para Datos Generales
+  const columnasDatosGenerales = [
+    {
+      name: "Cédula",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Nombres",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Apellidos",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Correo Institucional",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Facultad",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Modalidad del Devengamiento",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Categoría del Docente",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+
+  ];
+
+
+  const options = {
+    responsive: "standard",
+    selectableRows: "none",
+    toolbar: false,
+    search: false,
+    download: false,
+    print: false,
+    viewColumns: false,
+    filter: false,
+    pagination: false, // Desactivar el toolbar
+    textLabels: {
+      body: {
+        noMatch: "No se encontraron registros",
+        toolTip: "Ordenar",
+        columnHeaderTooltip: (column) => `Ordenar por ${column.label}`,
+      },
+      viewColumns: {
+        title: "Mostrar columnas",
+        titleAria: "Mostrar/ocultar columnas de la tabla",
+      },
+      selectedRows: {
+        text: "fila(s) seleccionada(s)",
+        delete: "Eliminar",
+        deleteAria: "Eliminar filas seleccionadas",
+      },
+    },
+  };
+  //Datos Generales para la tabla
+  const transformedDatosGenerales = dataGenerales.map((datosGenerales, index) => {
+    const datosRestantes = dataGenerales2.map((docente) => {
+    })
+    return [
+      datosGenerales.identification,
+      datosGenerales.name,
+      datosGenerales.lastname,
+      datosGenerales.email,
+      docente.faculty,
+      docente.modality,
+      docente.category
+
+    ];
+  });
+
+  const titleStyles = {
+    color: '#0076bd', // Cambia el color del título a azul
+    fontSize: '1.7em', // Cambia el tamaño de fuente del título
+
+  };
   return (
     <div>
       <Navigation />
 
       <div className="p-3 m-3">
         <h3 className="p-2">Datos Generales</h3>
+        <MUIDataTable
+          
+          data={transformedDatosGenerales}
+          columns={columnasDatosGenerales}
+          options={options}
+        />
 
-        <Table striped>
-          <thead>
-            <tr>
-              <th>Cedula</th>
-              <th>Nombres</th>
-              <th>Apellidos</th>
-              <th>Correo Institucional</th>
-            </tr>
-          </thead>
-          {datos.length ? (
-            <tbody>
-              {datos.map((docente, index) => (
-                <tr key={index}>
-                  <td>
-                    {docente.identification === null
-                      ? "No disponible"
-                      : docente.identification}
-                  </td>
-                  <td>
-                    {docente.name === null ? "No disponible" : docente.name}
-                  </td>
-                  <td>
-                    {docente.lastname === null
-                      ? "No disponible"
-                      : docente.lastname}
-                  </td>
-
-                  <td>
-                    {docente.email === null ? "No disponible" : docente.email}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          ) : (
-            <p>No existen datos del docente registrado</p>
-          )}
-
-          <thead>
-            <tr>
-              <th>Facultad</th>
-              <th>Modalidad del Devengamiento</th>
-              <th>Categoria del Docente</th>
-            </tr>
-          </thead>
-          {datosDocente.length ? (
-            <tbody>
-              {datosDocente.map((docenteData, index) => (
-                <tr key={index}>
-                  <td>
-                    {docenteData.faculty === null
-                      ? "No disponible"
-                      : docenteData.faculty}
-                  </td>
-                  <td>
-                    {docenteData.modality === null
-                      ? "No disponible"
-                      : docenteData.modality}
-                  </td>
-                  <td>
-                    {docenteData.category === null
-                      ? "No disponible"
-                      : docenteData.category}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          ) : (
-            <p>No existen datos del docente registrado</p>
-          )}
-        </Table>
       </div>
       <div className="p-3 m-3">
         <h3 className="p-2">Devengamiento</h3>
@@ -512,122 +573,122 @@ const variableObservaciones = "https://accrual.up.railway.app/accrualData/observ
                     <Button variant="primary" onClick={handleShowEditDev}>
                       Editar
                     </Button>
-                  
-                  <Modal show={showEditDev} onHide={handleCloseEditDev}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Datos de Devengamiento</Modal.Title>
-                    </Modal.Header>
 
-                    <Modal.Body>
-                      <div className="container py-3  text-center ">
-                        <div className="card-body">
-                          <div>
+                    <Modal show={showEditDev} onHide={handleCloseEditDev}>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Datos de Devengamiento</Modal.Title>
+                      </Modal.Header>
+
+                      <Modal.Body>
+                        <div className="container py-3  text-center ">
+                          <div className="card-body">
+                            <div>
+                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                                <label
+                                  className="p-2 col-form-label"
+                                  htmlFor="Enlace de la tesis"
+                                >
+                                  Enlace de la tesis
+                                </label>
+                                <div className="p-2 col-sm-8">
+                                  <input
+                                    className="form-control"
+                                    type="url"
+                                    placeholder="http://ejemplo.com"
+                                    value={enlaceTesis}
+                                    onChange={handleChangeEnlaceTesis}
+                                  ></input>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                              <label
+                                className="p-2 col-form-label"
+                                htmlFor="Fecha de lectura de la tesis"
+                              >
+                                Fecha de lectura de la tesis
+                              </label>
+                              <div className="p-2 col-sm-8">
+                                <input
+                                  type="date"
+                                  required={true}
+                                  id="Fecha de lectura de la tesis"
+                                  className="form-control"
+                                  value={fechaLectura}
+                                  onChange={handleChangeFechaLectura}
+                                />
+                              </div>
+                            </div>
+                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                              <label
+                                className="p-2 col-form-label"
+                                htmlFor="Fecha de reintegro"
+                              >
+                                Fecha de reintegro
+                              </label>
+                              <div className="p-2 col-sm-8">
+                                <input
+                                  type="date"
+                                  required={true}
+                                  id="Fecha de reintegro"
+                                  className="form-control"
+                                  value={fechaReintegro}
+                                  onChange={handleChangeFechaReintegro}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                                <label
+                                  className="p-2 col-form-label"
+                                  htmlFor="Enlace de la tesis"
+                                >
+                                  Tiempo de devengamiento (meses){" "}
+                                </label>
+                                <div className="p-2 col-sm-8">
+                                  <input
+                                    className="form-control"
+                                    type="number"
+                                    placeholder="0"
+                                    value={tiempoDevengamiento}
+                                    onChange={handleChangeTiempoDevengamiento}
+                                  />
+                                </div>
+                              </div>
+                            </div>
                             <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
                               <label
                                 className="p-2 col-form-label"
                                 htmlFor="Enlace de la tesis"
                               >
-                                Enlace de la tesis
+                                Enlace de Adenda o Contrato
                               </label>
                               <div className="p-2 col-sm-8">
                                 <input
                                   className="form-control"
                                   type="url"
                                   placeholder="http://ejemplo.com"
-                                  value={enlaceTesis}
-                                  onChange={handleChangeEnlaceTesis}
-                                ></input>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                            <label
-                              className="p-2 col-form-label"
-                              htmlFor="Fecha de lectura de la tesis"
-                            >
-                              Fecha de lectura de la tesis
-                            </label>
-                            <div className="p-2 col-sm-8">
-                              <input
-                                type="date"
-                                required={true}
-                                id="Fecha de lectura de la tesis"
-                                className="form-control"
-                                value={fechaLectura}
-                                onChange={handleChangeFechaLectura}
-                              />
-                            </div>
-                          </div>
-                          <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                            <label
-                              className="p-2 col-form-label"
-                              htmlFor="Fecha de reintegro"
-                            >
-                              Fecha de reintegro
-                            </label>
-                            <div className="p-2 col-sm-8">
-                              <input
-                                type="date"
-                                required={true}
-                                id="Fecha de reintegro"
-                                className="form-control"
-                                value={fechaReintegro}
-                                onChange={handleChangeFechaReintegro}
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                              <label
-                                className="p-2 col-form-label"
-                                htmlFor="Enlace de la tesis"
-                              >
-                                Tiempo de devengamiento (meses){" "}
-                              </label>
-                              <div className="p-2 col-sm-8">
-                                <input
-                                  className="form-control"
-                                  type="number"
-                                  placeholder="0"
-                                  value={tiempoDevengamiento}
-                                  onChange={handleChangeTiempoDevengamiento}
+                                  value={enlaceAdendaContrato}
+                                  onChange={handleChangeEnlaceAdendaContrato}
                                 />
                               </div>
                             </div>
                           </div>
-                          <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                            <label
-                              className="p-2 col-form-label"
-                              htmlFor="Enlace de la tesis"
-                            >
-                              Enlace de Adenda o Contrato
-                            </label>
-                            <div className="p-2 col-sm-8">
-                              <input
-                                className="form-control"
-                                type="url"
-                                placeholder="http://ejemplo.com"
-                                value={enlaceAdendaContrato}
-                                onChange={handleChangeEnlaceAdendaContrato}
-                              />
-                            </div>
-                          </div>
                         </div>
-                      </div>
-                    </Modal.Body>
+                      </Modal.Body>
 
-                    <Modal.Footer>
-                      <Button
-                        variant="secondary"
-                        onClick={handleCloseEditDev}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button variant="primary" onClick={handleSubmit}>
-                        Enviar
-                      </Button>
-                    </Modal.Footer>
-                  </Modal>
+                      <Modal.Footer>
+                        <Button
+                          variant="secondary"
+                          onClick={handleCloseEditDev}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button variant="primary" onClick={handleSubmit}>
+                          Enviar
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
                   </td>
                 </tr>
               ))}
