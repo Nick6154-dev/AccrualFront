@@ -2,6 +2,10 @@ h3 {
     color: #0076bd
 }
 
+h2 {
+    font-size: 1.7rem;
+}
+
 /*Header*/
 .header {
     background-image: url(./img/plantillaCabecera.png);
@@ -77,6 +81,6 @@ h3 {
 .header-datatable{
     padding: 0.8rem;
     color: #0076bd;
-    font-weight: 700;
+    font-weight: 650;
     font-size: 1.2rem;
 }

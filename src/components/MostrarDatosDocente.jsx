@@ -28,7 +28,8 @@ function MostrarDatosDocente() {
 
   const [dataGenerales, setDataGenerales] = useState([]);
   const [dataGenerales2, setDataGenerales2] = useState([]);
-  
+  const [dataDevengamiento, setDataDevengamiento] = useState([]);
+
   //Obtener el idPersona con estado
   const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
   useEffect(() => {
@@ -43,7 +44,7 @@ function MostrarDatosDocente() {
     };
   }, []);
 
-  
+
   //Obtener datos generales
   const useLoaderData = () => {
     const [data, setData] = useState({});
@@ -100,9 +101,9 @@ function MostrarDatosDocente() {
     return data2;
   };
 
+  const [data3, setData3] = useState([]);
   //Obtener datos de Devengamiento del Docente
   const useLoaderData3 = () => {
-    const [data3, setData3] = useState({});
     const loader3 = async () => {
       try {
         const response3 = await fetch(
@@ -118,7 +119,7 @@ function MostrarDatosDocente() {
         );
 
         const dataDevengamiento = await response3.json();
-
+        setDataDevengamiento([dataDevengamiento]);
         setIdAccrualData(dataDevengamiento.idAccrualData);
         setDocente(dataDevengamiento.docent);
 
@@ -164,9 +165,11 @@ function MostrarDatosDocente() {
     return data3;
   };
 
+
   //Obtener datos de redes de los Docentes
+
+  const [data4, setData4] = useState([]);
   const useLoaderData4 = () => {
-    const [data4, setData4] = useState({});
     const loader4 = async () => {
       try {
         const response4 = await fetch(`${variableRedes}/${idPersona}`, {
@@ -452,6 +455,132 @@ function MostrarDatosDocente() {
 
   ];
 
+  // Definimos las columnas para Datos Devengamiento
+  const columnasDatosDevengamiento = [
+    {
+      name: "Enlace de Tesis",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Fecha de lectura de la tesis",
+      options: {
+        setCellProps: () => ({ style: { paddingLeft: '40px', paddingRight: '40px' } }),
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Fecha de reintegro",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Tiempo de devengamiento",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Enlace de Contrato o Adenda",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+        customBodyRender: () => {
+          return (
+            <Button variant="primary" onClick={handleShowEditDev}>
+              Editar
+            </Button>
+          );
+        },
+      },
+    },
+
+  ];
+
+
+  // Definimos las columnas para Datos Redes
+  const columnasDatosRedes = [
+    {
+      name: "REDI/CEDIA",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Sistema de Investigadores nacionales de Senescyt",
+      options: {
+        setCellProps: () => ({ style: { paddingLeft: '40px', paddingRight: '40px' } }),
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "Codigo ORCI",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+      },
+    },
+    {
+      name: "",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+        customBodyRender: () => {
+          return (
+            <Button variant="primary" onClick={handleShowEditRed}>
+              Editar
+            </Button>
+          );
+        },
+      },
+    },
+
+  ];
 
   const options = {
     responsive: "standard",
@@ -480,7 +609,8 @@ function MostrarDatosDocente() {
       },
     },
   };
-  //Datos Generales para la tabla
+
+  //Datos Generales para la tabla Datos Generales
   const transformedDatosGenerales = dataGenerales.map((datosGenerales, index) => {
     const datosRestantes = dataGenerales2.map((docente) => {
     })
@@ -496,19 +626,34 @@ function MostrarDatosDocente() {
     ];
   });
 
-  const titleStyles = {
-    color: '#0076bd', // Cambia el color del título a azul
-    fontSize: '1.7em', // Cambia el tamaño de fuente del título
+  //Datos Generales para la tabla Datos Devengamiento
+  const transformedDatosDevengamiento = data3.map((datosDevengamiento, index) => {
 
-  };
+    return [
+      datosDevengamiento.thesisLink,
+      datosDevengamiento.fechaLecturaTesis,
+      datosDevengamiento.fechaReintegroTesis,
+      datosDevengamiento.accrualTime,
+      datosDevengamiento.contractAddendumLink,
+    ];
+  });
+
+  //Datos Generales para la tabla Datos Redes
+  const transformedDatosRedes = data4.map((datosRedes, index) => {
+    return [
+      datosRedes.cedia,
+      datosRedes.rniSenesyt,
+      datosRedes.orcidCode
+    ];
+  });
+
   return (
     <div>
       <Navigation />
 
       <div className="p-3 m-3">
-        <h3 className="p-2">Datos Generales</h3>
+        <h2 className="p-2">Datos Generales</h2>
         <MUIDataTable
-          
           data={transformedDatosGenerales}
           columns={columnasDatosGenerales}
           options={options}
@@ -516,325 +661,232 @@ function MostrarDatosDocente() {
 
       </div>
       <div className="p-3 m-3">
-        <h3 className="p-2">Devengamiento</h3>
-        <Table striped>
-          <thead>
-            <tr>
-              <th>Enlace de Tesis</th>
-              <th>Fecha de lectura de la tesis</th>
-              <th>Fecha de reintegro</th>
-            </tr>
-          </thead>
-          {datosDevengamiento.length ? (
-            <tbody>
-              {datosDevengamiento.map((devengamiento, index) => (
-                <tr key={index}>
-                  <td>
-                    {devengamiento.thesisLink === null
-                      ? "No disponible"
-                      : devengamiento.thesisLink}
-                  </td>
-                  <td>
-                    {devengamiento.fechaLecturaTesis === null
-                      ? "No disponible"
-                      : devengamiento.fechaLecturaTesis}
-                  </td>
-                  <td>
-                    {devengamiento.fechaReintegroTesis === null
-                      ? "No disponible"
-                      : devengamiento.fechaReintegroTesis}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          ) : (
-            <p>No existen datos del docente registrado</p>
-          )}
-          <thead>
-            <th>Tiempo de Devengamiento</th>
-            <th>Enlace de Contrato o Adenda</th>
-            <th> </th>
-          </thead>
-          {datosDevengamiento.length ? (
-            <tbody>
-              {datosDevengamiento.map((devengamiento, index) => (
-                <tr key={index}>
-                  <td>
-                    {devengamiento.accrualTime === null
-                      ? "No disponible"
-                      : devengamiento.accrualTime}
-                  </td>
-                  <td>
-                    {devengamiento.contractAddendumLink === "null"
-                      ? "No disponible"
-                      : devengamiento.contractAddendumLink}
-                  </td>
-                  <td>
-                    <Button variant="primary" onClick={handleShowEditDev}>
-                      Editar
-                    </Button>
-
-                    <Modal show={showEditDev} onHide={handleCloseEditDev}>
-                      <Modal.Header closeButton>
-                        <Modal.Title>Datos de Devengamiento</Modal.Title>
-                      </Modal.Header>
-
-                      <Modal.Body>
-                        <div className="container py-3  text-center ">
-                          <div className="card-body">
-                            <div>
-                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                                <label
-                                  className="p-2 col-form-label"
-                                  htmlFor="Enlace de la tesis"
-                                >
-                                  Enlace de la tesis
-                                </label>
-                                <div className="p-2 col-sm-8">
-                                  <input
-                                    className="form-control"
-                                    type="url"
-                                    placeholder="http://ejemplo.com"
-                                    value={enlaceTesis}
-                                    onChange={handleChangeEnlaceTesis}
-                                  ></input>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                              <label
-                                className="p-2 col-form-label"
-                                htmlFor="Fecha de lectura de la tesis"
-                              >
-                                Fecha de lectura de la tesis
-                              </label>
-                              <div className="p-2 col-sm-8">
-                                <input
-                                  type="date"
-                                  required={true}
-                                  id="Fecha de lectura de la tesis"
-                                  className="form-control"
-                                  value={fechaLectura}
-                                  onChange={handleChangeFechaLectura}
-                                />
-                              </div>
-                            </div>
-                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                              <label
-                                className="p-2 col-form-label"
-                                htmlFor="Fecha de reintegro"
-                              >
-                                Fecha de reintegro
-                              </label>
-                              <div className="p-2 col-sm-8">
-                                <input
-                                  type="date"
-                                  required={true}
-                                  id="Fecha de reintegro"
-                                  className="form-control"
-                                  value={fechaReintegro}
-                                  onChange={handleChangeFechaReintegro}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                                <label
-                                  className="p-2 col-form-label"
-                                  htmlFor="Enlace de la tesis"
-                                >
-                                  Tiempo de devengamiento (meses){" "}
-                                </label>
-                                <div className="p-2 col-sm-8">
-                                  <input
-                                    className="form-control"
-                                    type="number"
-                                    placeholder="0"
-                                    value={tiempoDevengamiento}
-                                    onChange={handleChangeTiempoDevengamiento}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                              <label
-                                className="p-2 col-form-label"
-                                htmlFor="Enlace de la tesis"
-                              >
-                                Enlace de Adenda o Contrato
-                              </label>
-                              <div className="p-2 col-sm-8">
-                                <input
-                                  className="form-control"
-                                  type="url"
-                                  placeholder="http://ejemplo.com"
-                                  value={enlaceAdendaContrato}
-                                  onChange={handleChangeEnlaceAdendaContrato}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Modal.Body>
-
-                      <Modal.Footer>
-                        <Button
-                          variant="secondary"
-                          onClick={handleCloseEditDev}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button variant="primary" onClick={handleSubmit}>
-                          Enviar
-                        </Button>
-                      </Modal.Footer>
-                    </Modal>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          ) : (
-            <p>No existen datos del docente registrado</p>
-          )}
-        </Table>
+        <h2 className="p-2">Devengamiento</h2>
+        <MUIDataTable
+          data={transformedDatosDevengamiento}
+          columns={columnasDatosDevengamiento}
+          options={options}
+        />
       </div>
+      <Modal show={showEditDev} onHide={handleCloseEditDev}>
+        <Modal.Header closeButton>
+          <Modal.Title>Datos de Devengamiento</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="container py-3  text-center ">
+            <div className="card-body">
+              <div>
+                <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                  <label
+                    className="p-2 col-form-label"
+                    htmlFor="Enlace de la tesis"
+                  >
+                    Enlace de la tesis
+                  </label>
+                  <div className="p-2 col-sm-8">
+                    <input
+                      className="form-control"
+                      type="url"
+                      placeholder="http://ejemplo.com"
+                      value={enlaceTesis}
+                      onChange={handleChangeEnlaceTesis}
+                    ></input>
+                  </div>
+                </div>
+              </div>
+              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                <label
+                  className="p-2 col-form-label"
+                  htmlFor="Fecha de lectura de la tesis"
+                >
+                  Fecha de lectura de la tesis
+                </label>
+                <div className="p-2 col-sm-8">
+                  <input
+                    type="date"
+                    required={true}
+                    id="Fecha de lectura de la tesis"
+                    className="form-control"
+                    value={fechaLectura}
+                    onChange={handleChangeFechaLectura}
+                  />
+                </div>
+              </div>
+              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                <label
+                  className="p-2 col-form-label"
+                  htmlFor="Fecha de reintegro"
+                >
+                  Fecha de reintegro
+                </label>
+                <div className="p-2 col-sm-8">
+                  <input
+                    type="date"
+                    required={true}
+                    id="Fecha de reintegro"
+                    className="form-control"
+                    value={fechaReintegro}
+                    onChange={handleChangeFechaReintegro}
+                  />
+                </div>
+              </div>
+              <div>
+                <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                  <label
+                    className="p-2 col-form-label"
+                    htmlFor="Enlace de la tesis"
+                  >
+                    Tiempo de devengamiento (meses){" "}
+                  </label>
+                  <div className="p-2 col-sm-8">
+                    <input
+                      className="form-control"
+                      type="number"
+                      placeholder="0"
+                      value={tiempoDevengamiento}
+                      onChange={handleChangeTiempoDevengamiento}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                <label
+                  className="p-2 col-form-label"
+                  htmlFor="Enlace de la tesis"
+                >
+                  Enlace de Adenda o Contrato
+                </label>
+                <div className="p-2 col-sm-8">
+                  <input
+                    className="form-control"
+                    type="url"
+                    placeholder="http://ejemplo.com"
+                    value={enlaceAdendaContrato}
+                    onChange={handleChangeEnlaceAdendaContrato}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={handleCloseEditDev}
+          >
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Enviar
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="p-3 m-3">
-        <h3 className="p-2">Redes</h3>
-        <Table striped>
-          <thead>
-            <tr>
-              <th>REDI/ CEDIA</th>
-              <th>Sistema de Investigadores nacionales de Senescyt</th>
-              <th>Codigo ORCI</th>
-              <th> </th>
-            </tr>
-          </thead>
-          {datosRedes.length ? (
-            <tbody>
-              {datosRedes.map((redes, index) => (
-                <tr key={index}>
-                  <td>
-                    {redes.cedia === null ? "No disponible" : redes.cedia}
-                  </td>
-                  <td>
-                    {redes.rniSenesyt === null
-                      ? "No disponible"
-                      : redes.rniSenesyt}
-                  </td>
-                  <td>
-                    {redes.orcidCode === null
-                      ? "No disponible"
-                      : redes.orcidCode}
-                  </td>
-                  <td>
-                    <Button variant="primary" onClick={handleShowEditRed}>
-                      Editar
-                    </Button>
-                    <Modal show={showEditRed} onHide={handleCloseEditRed}>
-                      <Modal.Header closeButton>
-                        <Modal.Title>Datos de Redes </Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        <div className="container py-3  text-center ">
-                          <div className="card-body">
-                            <div>
-                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                                <label
-                                  className="p-2 col-form-label"
-                                  htmlFor="Senescyt"
-                                >
-                                  Forma parte de la Red de Investigadores
-                                  nacionales de REDI/ CEDIA{" "}
-                                </label>
-                                <div className="p-2 col-sm-8">
-                                  <select
-                                    id="select"
-                                    className="form-control"
-                                    required={true}
-                                    name="idSenescyt"
-                                    value={rediCedia}
-                                    onChange={handleChangeRediCedia}
-                                  >
-                                    <option>Seleccione... </option>
-                                    <option value="Si">SI</option>
-                                    <option value="No">NO</option>
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                                <label
-                                  className="p-2 col-form-label"
-                                  htmlFor="Senescyt"
-                                >
-                                  Está registrado en el sistema de
-                                  Investigadores nacionales de Senescyt
-                                </label>
-                                <div className="p-2 col-sm-8">
-                                  <select
-                                    id="select"
-                                    className="form-control"
-                                    required={true}
-                                    name="idSenescyt"
-                                    value={senescyt}
-                                    onChange={handleChangeSenescyt}
-                                  >
-                                    <option>Seleccione... </option>
-                                    <option value="Si">SI</option>
-                                    <option value="No">NO</option>
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-                            <div>
-                              <div>
-                                <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                                  <label
-                                    className="p-2 col-form-label"
-                                    htmlFor="Senescyt"
-                                  >
-                                    Codigo Orcid
-                                  </label>
-                                  <div className="p-2 col-sm-8">
-                                    <input
-                                      type="text"
-                                      id="select"
-                                      className="form-control"
-                                      required={true}
-                                      name="orcid"
-                                      value={orcid}
-                                      onChange={handleChangeRediOrcid}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button
-                          variant="secondary"
-                          onClick={handleCloseEditRed}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button variant="primary" onClick={handleSubmitRedes}>
-                          Enviar
-                        </Button>
-                      </Modal.Footer>
-                    </Modal>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          ) : (
-            <p>No existen datos del docente registrados</p>
-          )}
-        </Table>
+        <h2 className="p-2">Redes</h2>
+        <MUIDataTable
+          data={transformedDatosRedes}
+          columns={columnasDatosRedes}
+          options={options}
+        />
       </div>
+
+      <Modal show={showEditRed} onHide={handleCloseEditRed}>
+        <Modal.Header closeButton>
+          <Modal.Title>Datos de Redes </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="container py-3  text-center ">
+            <div className="card-body">
+              <div>
+                <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                  <label
+                    className="p-2 col-form-label"
+                    htmlFor="Senescyt"
+                  >
+                    Forma parte de la Red de Investigadores
+                    nacionales de REDI/ CEDIA{" "}
+                  </label>
+                  <div className="p-2 col-sm-8">
+                    <select
+                      id="select"
+                      className="form-control"
+                      required={true}
+                      name="idSenescyt"
+                      value={rediCedia}
+                      onChange={handleChangeRediCedia}
+                    >
+                      <option>Seleccione... </option>
+                      <option value="Si">SI</option>
+                      <option value="No">NO</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                  <label
+                    className="p-2 col-form-label"
+                    htmlFor="Senescyt"
+                  >
+                    Está registrado en el sistema de
+                    Investigadores nacionales de Senescyt
+                  </label>
+                  <div className="p-2 col-sm-8">
+                    <select
+                      id="select"
+                      className="form-control"
+                      required={true}
+                      name="idSenescyt"
+                      value={senescyt}
+                      onChange={handleChangeSenescyt}
+                    >
+                      <option>Seleccione... </option>
+                      <option value="Si">SI</option>
+                      <option value="No">NO</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                    <label
+                      className="p-2 col-form-label"
+                      htmlFor="Senescyt"
+                    >
+                      Codigo Orcid
+                    </label>
+                    <div className="p-2 col-sm-8">
+                      <input
+                        type="text"
+                        id="select"
+                        className="form-control"
+                        required={true}
+                        name="orcid"
+                        value={orcid}
+                        onChange={handleChangeRediOrcid}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={handleCloseEditRed}
+          >
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleSubmitRedes}>
+            Enviar
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="py-2 text-center">
         <Button variant="primary" onClick={handleShow}>
           Observaciones{" "}
