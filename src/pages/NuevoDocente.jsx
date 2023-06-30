@@ -5,8 +5,8 @@ import Swal from "sweetalert2";
 
 function NuevoDocente() {
 
-    const variableFacultad = "https://accrual.up.railway.app/faculty/withoutToken";
-    const variableNuevoDocente = "https://accrual.up.railway.app/register/ByAnotherOne";
+    const variableFacultad = "https://accrual-back-0d9df6337af0.herokuapp.com/faculty/withoutToken";
+    const variableNuevoDocente = "https://accrual-back-0d9df6337af0.herokuapp.com/register/ByAnotherOne";
 
     //Obtener datos generales del docente
     const [valorSelectFacultad, setvalorSelectFacultad] = useState(1);

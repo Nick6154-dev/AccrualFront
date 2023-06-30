@@ -12,13 +12,13 @@ function MostrarDatosDocente() {
   //Obtenemos el Token con estado
   const token = sessionStorage.getItem("token");
 
-  const variable = "https://accrual.up.railway.app/person";
-  const variableDatosDocente = "https://accrual.up.railway.app/docent/byIdPerson";
-  const variableDatosDevengamiento = "https://accrual.up.railway.app/accrualData/ByIdPerson";
-  const variableActualizarDevengamiento = "https://accrual.up.railway.app/accrualData";
-  const variableRedes = "https://accrual.up.railway.app/network/byIdPerson";
-  const variableActualizarRedes = "https://accrual.up.railway.app/network";
-  const variableObservaciones = "https://accrual.up.railway.app/accrualData/observation"
+  const variable = "https://accrual-back-0d9df6337af0.herokuapp.com/person";
+  const variableDatosDocente = "https://accrual-back-0d9df6337af0.herokuapp.com/docent/byIdPerson";
+  const variableDatosDevengamiento = "https://accrual-back-0d9df6337af0.herokuapp.com/accrualData/ByIdPerson";
+  const variableActualizarDevengamiento = "https://accrual-back-0d9df6337af0.herokuapp.com/accrualData";
+  const variableRedes = "https://accrual-back-0d9df6337af0.herokuapp.com/network/byIdPerson";
+  const variableActualizarRedes = "https://accrual-back-0d9df6337af0.herokuapp.com/network";
+  const variableObservaciones = "https://accrual-back-0d9df6337af0.herokuapp.com/accrualData/observation"
 
 
   const [idAccrualData, setIdAccrualData] = useState("");

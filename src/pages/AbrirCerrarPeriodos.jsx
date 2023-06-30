@@ -6,10 +6,10 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 
 
-const variableObtenerPeriodos = "https://accrual.up.railway.app/period";
-const variableNuevoPeriodo = "https://accrual.up.railway.app/period/save";
-const variableCerrarPeriodo = "https://accrual.up.railway.app/period/switchActivePeriod";
-const variableEliminarPeriodo = "https://accrual.up.railway.app/period/deletePeriodById";
+const variableObtenerPeriodos = "https://accrual-back-0d9df6337af0.herokuapp.com/period";
+const variableNuevoPeriodo = "https://accrual-back-0d9df6337af0.herokuapp.com/period/save";
+const variableCerrarPeriodo = "https://accrual-back-0d9df6337af0.herokuapp.com/period/switchActivePeriod";
+const variableEliminarPeriodo = "https://accrual-back-0d9df6337af0.herokuapp.com/period/deletePeriodById";
 
 function AbrirCerrarPeriodos() {
 

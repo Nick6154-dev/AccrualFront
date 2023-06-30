@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { NavLink } from 'react-router-dom';
 import Swal from "sweetalert2";
 
-const variable = "https://accrual.up.railway.app/accrual/authorization";
+const variable = "https://accrual-back-0d9df6337af0.herokuapp.com/accrual/authorization";
 
 export async function action({ request }) {
   const formData = await request.formData();

@@ -10,9 +10,10 @@ import Swal from "sweetalert2";
 
 
 const variableObtenerActividades =
-  "https://accrual.up.railway.app/activityPlan/byPlan";
+  "https://accrual-back-0d9df6337af0.herokuapp.com/activityPlan/byPlan";
+
 const variableNoEditable =
-  "https://accrual.up.railway.app/plan/updatePlanNotEditable";
+  "https://accrual-back-0d9df6337af0.herokuapp.com/plan/updatePlanNotEditable";
 
 export async function action({ params }) {
   await eliminarActividad(params.actividadId);
@@ -104,7 +105,7 @@ useEffect(() => {
   async function handleEnviar() {
     try {
       const respuesta = await fetch(
-        `${variableNoEditable}/${idPerson},${period}`,
+        `${variableNoEditable}/${idPersona},${period}`,
         {
           method: "PATCH",
           mode: "cors",

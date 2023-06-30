@@ -6,7 +6,8 @@ import Swal from "sweetalert2";
 import Error from "../components/Error";
 import { useParams } from "react-router-dom";
 import Alert from 'react-bootstrap/Alert';
-const variableEdit = "https://accrual.up.railway.app/activityPlanAccrual";
+
+const variableEdit = "https://accrual-back-0d9df6337af0.herokuapp.com/activityPlanAccrual";
 
 const token = sessionStorage.getItem("token");
 

@@ -3,26 +3,29 @@ import FormularioNuevaActividad from "../components/FormularioNuevaActividad";
 import Swal from "sweetalert2";
 import Error from "../components/Error";
 
+const variableSubmit = "https://accrual-back-0d9df6337af0.herokuapp.com/activityPlanAccrual";
+
 const token = sessionStorage.getItem("token");
-const variableSubmit ="https://accrual.up.railway.app/activityPlanAccrual";
 
 export async function action({ request }) {
+  const token = sessionStorage.getItem("token");
   const storedData = localStorage.getItem("datoSeleccionado");
   const idPersona = sessionStorage.getItem("idPersona");
   const idUniversidad = 1;
-  const period = localStorage.getItem("periodo");
+  const period = localStorage.getItem("idPeriodo");
   const institutionNameLocal = localStorage.getItem("universidad");
   const idCarrera = localStorage.getItem("idCarrera");
   const nombreOtraInstitucion = localStorage.getItem("nombreOtraInstitucion");
   const idFacultad = localStorage.getItem("idFacultad");
   const detalleDocente = localStorage.getItem("detalleDocente");
   const enlaceVerificacion = localStorage.getItem("enlaceVerificacion");
+ 
 
   const formData = await request.formData();
   const datos = Object.fromEntries(formData);
 
   datos.idActivitySubtype = storedData;
-  datos.period = period;
+  datos.idPeriod = period;
   datos.idPerson = idPersona;
 
   if (detalleDocente !== "") {
@@ -40,19 +43,18 @@ export async function action({ request }) {
     datos.verificationLink = enlaceVerificacion;
     datos.institutionName = nombreOtraInstitucion;
   }
-console.log(datos);
+  
   //Validacion
   const errores = [];
   if (Object.values(datos).includes("")) {
     errores.push("Todos los campos son obligatorios");
-    
+
   }
 
   //Retornar datos si hay errores
   if (Object.keys(errores).length) {
     return errores;
   }
-
   try {
     const respuesta = await fetch(variableSubmit, {
       method: "POST",
@@ -79,7 +81,7 @@ console.log(datos);
         if (result.isConfirmed) {
           window.location.reload();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-          setTimeout(function () {}, 1);
+          setTimeout(function () { }, 1);
         }
       });
     } else {
@@ -101,9 +103,10 @@ console.log(datos);
       confirmButtonText: "OK",
     });
   }
+  
+console.log(datos);
   return datos;
 }
-
 function NuevaActividadDevengamiento() {
   const errores = useActionData();
   return (

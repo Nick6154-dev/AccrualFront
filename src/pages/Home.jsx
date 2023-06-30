@@ -1,18 +1,22 @@
+
 import image from "../img/uce.png";
 import Navigation from "../components/Navigation";
 import { useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 
-const obteneridPlan = "https://accrual.up.railway.app/plan/byIdPersonPeriod";
+
+const variableObtenerPeriodo = "https://accrual-back-0d9df6337af0.herokuapp.com/period/findAllActivePeriods";
+const obteneridPlan = "https://accrual-back-0d9df6337af0.herokuapp.com/plan/byIdPersonPeriod";
 
 function Home() {
 
   //variables  a useState
+  const [periodosAbiertos, setPeriodosAbiertos] = useState("");
+  const [idPeriodo, setIdPeriodo] = useState("");
+  const [idPlan, setIdPlan] = useState("");
 
   //Obtenemos el Token con estado
   const token = sessionStorage.getItem("token");
-  const periodosAbiertos = localStorage.getItem("periodosAbiertos");
-
 
   //Obtenemos el idPersona con estado
   const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
@@ -28,12 +32,10 @@ function Home() {
     };
   }, []);
 
-
-  //Hacemos la consulta para obtener el idPlan
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${obteneridPlan}/${idPersona},${periodosAbiertos}`, {
+        const responsePeriodos = await fetch(`${variableObtenerPeriodo}`, {
           method: "GET",
           mode: "cors",
           headers: {
@@ -41,10 +43,22 @@ function Home() {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.ok) {
-          const data = await response.json();
-          
-          sessionStorage.setItem('idPlan', JSON.stringify(data.idPlan));
+        const periodosData = await responsePeriodos.json();
+        setPeriodosAbiertos(periodosData[0].valuePeriod);
+        setIdPeriodo(periodosData[0].idPeriod);
+
+        const responseIdPlan = await fetch(`${obteneridPlan}/${idPersona},${periodosData[0].valuePeriod}`, {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (responseIdPlan.ok) {
+          const idPlanData = await responseIdPlan.json();
+          setIdPlan(idPlanData.idPlan);
+         
         } else {
           throw new Error('Error en la consulta Fetch');
         }
@@ -55,6 +69,10 @@ function Home() {
 
     fetchData();
   }, []);
+
+  localStorage.setItem("periodosAbiertos", periodosAbiertos);
+  localStorage.setItem("idPeriodo", idPeriodo);
+  sessionStorage.setItem("idPlan", idPlan);
 
   return (
     <div>
@@ -84,7 +102,7 @@ function Home() {
           </Alert>
         ) : (
           <Alert variant="primary" className="col-sm-3 text-center">
-           Periodo Activo: <h3>{periodosAbiertos}</h3>
+            Periodo Activo: <h3>{periodosAbiertos}</h3>
           </Alert>
         )}
 

@@ -5,12 +5,13 @@ import Navigation from "./Navigation";
 import Alert from "react-bootstrap/Alert";
 
 
-const variableTipoActividad = "https://accrual.up.railway.app/type";
-const variableFacultad = "https://accrual.up.railway.app/faculty/byIdUniversity";
-const variableCarrera = "https://accrual.up.railway.app/career/byIdFaculty";
-const variableSubTipo = "https://accrual.up.railway.app/subtype/byIdType";
+const variableTipoActividad = "https://accrual-back-0d9df6337af0.herokuapp.com/type";
+const variableFacultad = "https://accrual-back-0d9df6337af0.herokuapp.com/faculty/byIdUniversity";
+const variableCarrera = "https://accrual-back-0d9df6337af0.herokuapp.com/career/byIdFaculty";
+const variableSubTipo = "https://accrual-back-0d9df6337af0.herokuapp.com/subtype/byIdType";
 
 function FormularioNuevaActividad({ actividad }) {
+
   //Obtenemos el Token con estado
   const [token, setToken] = useState(sessionStorage.getItem("token"));
   useEffect(() => {
@@ -29,7 +30,7 @@ function FormularioNuevaActividad({ actividad }) {
   const [periodo, setPeriodo] = useState(localStorage.getItem("periodosAbiertos"));
   useEffect(() => {
     const handleStorageChange = () => {
-      setPeriodo(localStorage.getItem("periodo"));
+      setPeriodo(localStorage.getItem("periodosAbiertos"));
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -38,6 +39,8 @@ function FormularioNuevaActividad({ actividad }) {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
+
+  //Obtenemos el idPEr
 
   const [estadoModal1, cambiarEstadoModal1] = useState(false);
   const [estadoModal2, cambiarEstadoModal2] = useState(false);
