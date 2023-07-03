@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 
 
-const variableObtenerPeriodo = "https://accrual-back-0d9df6337af0.herokuapp.com/period/findAllActivePeriods";
-const obteneridPlan = "https://accrual-back-0d9df6337af0.herokuapp.com/plan/byIdPersonPeriod";
+const variableObtenerPeriodo = "https://accrualback.up.railway.app/period/findAllActivePeriods";
+const obteneridPlan = "https://accrualback.up.railway.app/plan/byIdPersonPeriod";
 
 function Home() {
 
@@ -47,7 +47,7 @@ function Home() {
         setPeriodosAbiertos(periodosData[0].valuePeriod);
         setIdPeriodo(periodosData[0].idPeriod);
 
-        const responseIdPlan = await fetch(`${obteneridPlan}/${idPersona},${periodosData[0].valuePeriod}`, {
+        const responseIdPlan = await fetch(`${obteneridPlan}/${idPersona},${periodosData[0].idPeriod}`, {
           method: "GET",
           mode: "cors",
           headers: {

@@ -3,7 +3,7 @@ import FormularioNuevaActividad from "../components/FormularioNuevaActividad";
 import Swal from "sweetalert2";
 import Error from "../components/Error";
 
-const variableSubmit = "https://accrual-back-0d9df6337af0.herokuapp.com/activityPlanAccrual";
+const variableSubmit = "https://accrualback.up.railway.app/activityPlanAccrual";
 
 const token = sessionStorage.getItem("token");
 

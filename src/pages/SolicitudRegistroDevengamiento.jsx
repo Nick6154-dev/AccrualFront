@@ -3,8 +3,8 @@ import { Form } from "react-router-dom";
 import Swal from "sweetalert2";
 function SolicitudRegistroDevengamiento() {
 
-    const variableFacultad = "https://accrual-back-0d9df6337af0.herokuapp.com/faculty/withoutToken";
-    const variableRegistro = "https://accrual-back-0d9df6337af0.herokuapp.com/register/ByHimself"
+    const variableFacultad = "https://accrualback.up.railway.app/faculty/withoutToken";
+    const variableRegistro = "https://accrualback.up.railway.app/register/ByHimself"
 
     //Obtener datos generales del docente
     const [valorSelectFacultad, setvalorSelectFacultad] = useState(1);

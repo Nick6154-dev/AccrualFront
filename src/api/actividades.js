@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
-const variableObtenerActividades = "https://accrual-back-0d9df6337af0.herokuapp.com/activityPlan";
-const variableObtenerInstitucion = "https://accrual-back-0d9df6337af0.herokuapp.com/institution/withDetailsByIdActivityPlan"
-const variableEliminarActividad = "https://accrual-back-0d9df6337af0.herokuapp.com/activityPlanAccrual"
+const variableObtenerActividades = "https://accrualback.up.railway.app/activityPlan";
+const variableObtenerInstitucion = "https://accrualback.up.railway.app/institution/withDetailsByIdActivityPlan"
+const variableEliminarActividad = "https://accrualback.up.railway.app/activityPlanAccrual"
 
 
 export async function obtenerActividades(id) {

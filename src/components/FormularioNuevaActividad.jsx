@@ -5,10 +5,10 @@ import Navigation from "./Navigation";
 import Alert from "react-bootstrap/Alert";
 
 
-const variableTipoActividad = "https://accrual-back-0d9df6337af0.herokuapp.com/type";
-const variableFacultad = "https://accrual-back-0d9df6337af0.herokuapp.com/faculty/byIdUniversity";
-const variableCarrera = "https://accrual-back-0d9df6337af0.herokuapp.com/career/byIdFaculty";
-const variableSubTipo = "https://accrual-back-0d9df6337af0.herokuapp.com/subtype/byIdType";
+const variableTipoActividad = "https://accrualback.up.railway.app/type";
+const variableFacultad = "https://accrualback.up.railway.app/faculty/byIdUniversity";
+const variableCarrera = "https://accrualback.up.railway.app/career/byIdFaculty";
+const variableSubTipo = "https://accrualback.up.railway.app/subtype/byIdType";
 
 function FormularioNuevaActividad({ actividad }) {
 
@@ -40,8 +40,8 @@ function FormularioNuevaActividad({ actividad }) {
     };
   }, []);
 
-  //Obtenemos el idPEr
-
+  
+  
   const [estadoModal1, cambiarEstadoModal1] = useState(false);
   const [estadoModal2, cambiarEstadoModal2] = useState(false);
   const [estadoModal3, cambiarEstadoModal3] = useState(false);

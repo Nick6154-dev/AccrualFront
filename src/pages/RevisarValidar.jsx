@@ -9,9 +9,9 @@ import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 
-const variableObtenerDocentes = "https://accrual-back-0d9df6337af0.herokuapp.com/validator/findAllDocentPersonPlans";
-const variableAprobarPlanes = "https://accrual-back-0d9df6337af0.herokuapp.com/validator/approveAllPlans";
-const variableExcel = "https://accrual-back-0d9df6337af0.herokuapp.com/validator/generateExcelDocentsInPlan";
+const variableObtenerDocentes = "https://accrualback.up.railway.app/validator/findAllDocentPersonPlans";
+const variableAprobarPlanes = "https://accrualback.up.railway.app/validator/approveAllPlans";
+const variableExcel = "https://accrualback.up.railway.app/validator/generateExcelDocentsInPlan";
 function RevisarValidar() {
 
     const [show, setShow] = useState(false);
@@ -41,7 +41,6 @@ function RevisarValidar() {
     //Consulta a docentes que han llenado los planes
     useEffect(() => {
         const peticion = async () => {
-
             try {
                 const response = await fetch(`${variableObtenerDocentes}`, {
                     method: "GET",
