@@ -183,7 +183,6 @@ function SolicitudRegistroDevengamiento() {
         }
         return null;
     }
-
     return (
         <div>
             <div className="container py-3  text-center ">
@@ -256,21 +255,38 @@ function SolicitudRegistroDevengamiento() {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="form-group p-3 m-2">
-                                        <label className="py-3 text-muted label-form" htmlFor="modalidad">Modalidad de devengamiento:</label>
-                                        <input type="text" required className="form-control" id="modalidad" placeholder="Ingrese la modalidad de devengamiento"
-                                            value={valorModalidad}
-                                            onChange={handleChange6} />
-                                    </div>
+                                    <label className="py-4 my-1 text-muted label-form" htmlFor="modalidad">Modalidad de devengamiento:</label>
+                                    <select
+                                        id="modalidad"
+                                        required={true}
+                                        onChange={handleChange6}
+                                        value={valorModalidad}
+                                        className="form-control">
+                                        <option className="text-center"> ** Seleccione **</option>
+                                        <option value="Tiempo de devengamiento">Tiempo de devengamiento</option>
+                                        <option value="Medio tiempo (combinado)">Medio tiempo (combinado)</option>
+                                    </select>
+
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-md-4">
                                     <div className="form-group p-3 m-2">
                                         <label className="py-3 text-muted label-form" htmlFor="categoria">Categoría del Docente:</label>
-                                        <input type="text" required className="form-control" id="categoria" placeholder="Ingrese la categoría del docente"
+                                        <select
+                                            id="categoria" 
+                                            required={true}
+                                            onChange={handleChange7}
                                             value={valorCategoria}
-                                            onChange={handleChange7} />
+                                            className="form-control">
+                                            <option className="text-center"> ** Seleccione **</option>
+                                            <option value="Auxiliar 1">Auxiliar 1</option>
+                                            <option value="Auxiliar 2">Auxiliar 2</option>
+                                            <option value="Agregado 1">Agregado 1</option>
+                                            <option value="Agregado 2">Agregado 2</option>
+                                            <option value="Agregado 3">Agregado 3</option>
+                                            <option value="Principal">Principal</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
