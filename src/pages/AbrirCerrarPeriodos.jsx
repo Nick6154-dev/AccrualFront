@@ -1,9 +1,10 @@
 import Navigation from "../components/Navigation";
 import { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import MUIDataTable from 'mui-datatables';
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
+import Switch from "react-switch";
 
 
 const variableObtenerPeriodos = "https://accrualback.up.railway.app/period";
@@ -12,6 +13,7 @@ const variableCerrarPeriodo = "https://accrualback.up.railway.app/period/switchA
 const variableEliminarPeriodo = "https://accrualback.up.railway.app/period/deletePeriodById";
 
 function AbrirCerrarPeriodos() {
+
 
     const [dataPeriodo, setDataPeriodo] = useState([]);
     const [idPeriodo, setIdPeriodo] = useState("");
@@ -33,9 +35,9 @@ function AbrirCerrarPeriodos() {
     //Validar un solo periodo
     const [existePeriodoActivo, setExistePeriodoActivo] = useState(false);
     const [existePeriodoCerrado, setExistePeriodoCerrado] = useState(false);
-
-    const [ periodoActivo, setPeriodoActivo] = useState("");
-
+    const [periodoActivo, setPeriodoActivo] = useState("");
+    const [estadoPeriodoActual, setEstadoPeriodoActual] = useState();
+    const [estadosPeriodos, setEstadosPeriodos] = useState([]);
     //Validar que se ingrese el periodo
     const [errorFormato, setErrorFormato] = useState(false);
 
@@ -53,33 +55,42 @@ function AbrirCerrarPeriodos() {
         };
     }, []);
 
+    const obtenerPeriodos = async () => {
+        try {
+            const response = await fetch(`${variableObtenerPeriodos}`, {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data1 = await response.json();
+            setDataPeriodo(data1);
+
+            // Actualiza los estados de los periodos individuales
+            const estados = data1.map((periodo) => ({
+                idPeriodo: periodo.idPeriod,
+                active: periodo.active,
+            }));
+            setEstadosPeriodos(estados);
+
+            const existeActivo = data1.some((periodo) => periodo.active === true);
+            setExistePeriodoActivo(existeActivo);
+
+            const periodosActivos = data1
+                .filter((period) => period.active)
+                .map((period) => period.valuePeriod)
+                .join(", ");
+            localStorage.setItem("periodosAbiertos", periodosActivos);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     //Consulta de los periodos
     useEffect(() => {
-        const peticion = async () => {
-
-            try {
-                const response = await fetch(`${variableObtenerPeriodos}`, {
-                    method: "GET",
-                    mode: "cors",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data1 = await response.json();
-                setDataPeriodo(data1);
-                const existeActivo = data1.some(periodo => periodo.active === true);
-                setExistePeriodoActivo(existeActivo);
-
-                const periodosActivos = data1.filter(period => period.active)// Filtrar los períodos activos
-                    .map(period => period.valuePeriod).join(", "); // Obtener los valores de los períodos activos
-                localStorage.setItem("periodosAbiertos", periodosActivos );
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        peticion();
-
+        obtenerPeriodos();
     }, []);
 
     const handleShow = () => {
@@ -177,17 +188,8 @@ function AbrirCerrarPeriodos() {
     }
 
     // Abrir/Cerrar el periodo
-    async function handleCerrar() {
-        if (existePeriodoActivo && !existePeriodoCerrado) {
-            await Swal.fire({
-                title: "Error",
-                text: "Ya existe un periodo abierto",
-                icon: "error",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "OK",
-            });
-            return;
-        }
+    async function handleCerrar(idPeriodo) {
+
         try {
             const respuesta = await fetch(`${variableCerrarPeriodo}/${idPeriodo}`, {
                 method: "PATCH",
@@ -200,15 +202,8 @@ function AbrirCerrarPeriodos() {
             });
 
             if (respuesta.ok) {
-                await Swal.fire({
-                    title: "Realizado",
-                    text: "El estado del periodo se ha modificado",
-                    icon: "success",
+                obtenerPeriodos();
 
-                    confirmButtonColor: "#3085d6",
-
-                });
-                window.location.reload();
             } else {
                 await Swal.fire({
                     title: "Error",
@@ -231,6 +226,20 @@ function AbrirCerrarPeriodos() {
         return null;
     }
 
+    const handleShow2 = (periodo) => {
+        const estadoPeriodo = periodo.active;
+        const idPeriodo = periodo.idPeriod;
+
+        setEstadosPeriodos((estados) =>
+            estados.map((estado) =>
+                estado.idPeriodo === idPeriodo
+                    ? { ...estado, active: !estadoPeriodo }
+                    : estado
+            )
+
+        );
+        handleCerrar(idPeriodo);
+    };
     // Definimos las columnas
     const columns = [
         {
@@ -264,37 +273,29 @@ function AbrirCerrarPeriodos() {
             },
         },
         {
-            name: "OPCIÓN",
+            name: "Abrir/Cerrar",
             options: {
                 customHeadRender: (columnMeta) => {
-                    return (
-                        <th className="header-datatable">{columnMeta.label}</th>
-                    );
+                    return <th className="header-datatable">{columnMeta.label}</th>;
                 },
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
                     const periodo = dataPeriodo[rowIndex];
-
-                    const handleShow2 = () => {
-                        const idPeriodo = periodo.idPeriod;
-                        setIdPeriodo(idPeriodo);
-                        const estadoPeriodoActual = periodo.active;
-                        setExistePeriodoCerrado(estadoPeriodoActual);
-                        setShow2(true);
-                    };
-
-                    const isPeriodActive = periodo.active !== false;
-
+                    const idPeriodo = periodo.idPeriod;
+                    setIdPeriodo(idPeriodo);
                     return (
                         <div>
-                            <div class="d-grid gap-2 d-sm-block">
-                                <Button variant="danger" className=" mx-1 btn-block" onClick={handleShow2} disabled={!isPeriodActive}>
-                                    Cerrar Periodo
-                                </Button>
-                                <Button variant="success" className="mx-2 btn-block" disabled={isPeriodActive} onClick={handleShow2}>
-                                    Abrir Periodo
-                                </Button>
-                            </div>
+                            <Switch
+                                onChange={() => handleShow2(periodo, idPeriodo)}
+                                checked={
+                                    estadosPeriodos.find(
+                                        (estado) => estado.idPeriodo === periodo.idPeriod
+                                    )?.active || false
+                                }
+                                disabled={existePeriodoActivo && !periodo.active}
+                                className="react-switch"
+
+                            />
                         </div>
                     );
                 },
@@ -376,12 +377,12 @@ function AbrirCerrarPeriodos() {
 
     const transformedData = dataPeriodo.map((periodo, index) => {
         return [
+            
             index + 1, // Columna #
             periodo.valuePeriod,
             periodo.active !== false ? 'Abierto' : 'Cerrado', // Transforma el valor a "Abierto" o "Cerrado"
         ];
     });
-
     const options = {
         responsive: "standard",
         selectableRows: "none",

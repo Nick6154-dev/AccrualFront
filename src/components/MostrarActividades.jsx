@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 
 
 const variableObtenerActividades =
-  "https://accrualback.up.railway.app/activityPlan/byPlan";
+  "https://accrualback.up.railway.app/activityPlanAccrual/byPlan";
 
 const variableNoEditable =
   "https://accrualback.up.railway.app/plan/updatePlanNotEditable";
@@ -66,18 +66,21 @@ function MostrarActividades() {
     };
   }, []);
 
+  const idPeriodo= localStorage.getItem("idPeriodo");
+
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [dataActividad, setDataActividad] = useState([]);
+
   // Consultas para datos de la actividad de devengamiento
   const useLoaderData1 = () => {
     const loader1 = async () => {
       try {
         const response1 = await fetch(
-          `${variableObtenerActividades}/${idPlan}`,
+          `${variableObtenerActividades}/${idPersona},${idPeriodo}`,
           {
             method: "GET",
             mode: "cors",
@@ -102,6 +105,7 @@ function MostrarActividades() {
 
   // Obtener datos del editar actividad
   const datosActividadPlan = useLoaderData1();
+
   //Enviar actividades
   async function handleEnviar() {
     try {
@@ -283,7 +287,7 @@ function MostrarActividades() {
       },
     }
   ];
-
+ console.log(datosActividadPlan);
   //Datos para el dataTable
   const transformedData = datosActividadPlan.map((actividades, index) => {
     return [
@@ -295,7 +299,7 @@ function MostrarActividades() {
       + actividades.activityPlan.activity.endDate[2],
       actividades.activityPlan.activity.description,
       actividades.activityPlan.activity.evidences,
-      actividades.object.institution.institutionName
+      actividades.institutionPlan.institution.institutionName
     ];
   });
 

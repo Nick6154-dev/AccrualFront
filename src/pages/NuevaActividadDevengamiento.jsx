@@ -7,8 +7,10 @@ const variableSubmit = "https://accrualback.up.railway.app/activityPlanAccrual";
 
 const token = sessionStorage.getItem("token");
 
+
 export async function action({ request }) {
   const token = sessionStorage.getItem("token");
+
   const storedData = localStorage.getItem("datoSeleccionado");
   const idPersona = sessionStorage.getItem("idPersona");
   const idUniversidad = 1;
@@ -18,8 +20,7 @@ export async function action({ request }) {
   const nombreOtraInstitucion = localStorage.getItem("nombreOtraInstitucion");
   const idFacultad = localStorage.getItem("idFacultad");
   const detalleDocente = localStorage.getItem("detalleDocente");
-  const enlaceVerificacion = localStorage.getItem("enlaceVerificacion");
- 
+
 
   const formData = await request.formData();
   const datos = Object.fromEntries(formData);
@@ -32,7 +33,7 @@ export async function action({ request }) {
     datos.descriptionSubtype = detalleDocente;
   }
 
-  if (enlaceVerificacion === "" && nombreOtraInstitucion === "") {
+  if (nombreOtraInstitucion === "") {
     datos.idCareer = idCarrera;
     datos.idFaculty = idFacultad;
     datos.idUniversity = idUniversidad;
@@ -40,10 +41,9 @@ export async function action({ request }) {
   }
   if (idCarrera === "") {
     datos.otherInstitutionName = nombreOtraInstitucion;
-    datos.verificationLink = enlaceVerificacion;
     datos.institutionName = nombreOtraInstitucion;
   }
-  
+
   //Validacion
   const errores = [];
   if (Object.values(datos).includes("")) {
@@ -65,23 +65,22 @@ export async function action({ request }) {
       },
       body: JSON.stringify(datos),
     });
-    const actividades = await respuesta.json();
-    sessionStorage.setItem("idPlan", actividades);
+    console.log(respuesta)
     if (respuesta.ok) {
       await Swal.fire({
         title: "Actividad Registrada",
-        text: "El formulario se ha registrado, si requiere enviarlo, diríjase a 'Ver' ",
+        text: "El formulario se ha registrado, si requiere enviarlo, diríjase a 'Mostrar'",
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
+        cancelButtonColor: "#5f559c", 
         confirmButtonText: "Enviar otra Respuesta",
-        cancelButtonText: "Cerrar",
+        cancelButtonText: "Mostrar Actividades", 
       }).then((result) => {
         if (result.isConfirmed) {
           window.location.reload();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-          setTimeout(function () { }, 1);
+          window.location.href = "#/mostrarActividades"; 
         }
       });
     } else {
@@ -103,8 +102,7 @@ export async function action({ request }) {
       confirmButtonText: "OK",
     });
   }
-  
-console.log(datos);
+
   return datos;
 }
 function NuevaActividadDevengamiento() {

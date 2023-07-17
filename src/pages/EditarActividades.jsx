@@ -13,7 +13,7 @@ const token = sessionStorage.getItem("token");
 
 export async function loader({ params }) {
 
-  const actividades = await obtenerActividades(params.actividadId, token);
+  const actividades = await obtenerActividades(params.actividadId);
 
   if (Object.values(actividades).length === 0) {
     throw new Response("", {
@@ -30,46 +30,17 @@ function EditarActividades() {
   const params = useParams();
 
   //Obtenemos el Token con estado
-  const [token, setToken] = useState(sessionStorage.getItem("token"));
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setToken(sessionStorage.getItem("token"));
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
+  const token= sessionStorage.getItem("token");
+  
   const actividades = useLoaderData();
   const errores = useActionData();
-
-
-  // Dentro del componente EditarActividades
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const token = sessionStorage.getItem("token");
-      if (token) {
-        obtenerActividades(id); // Llamar a la función con el nuevo token
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
 
   const handleSubmit = async (event) => {
 
     const storedData = localStorage.getItem("datoSeleccionado");
     const idPersona = sessionStorage.getItem("idPersona");
     const idUniversidad = 1;
-    const period = localStorage.getItem("periodo");
+    const period = localStorage.getItem("idPeriodo");
     const institutionNameLocal = localStorage.getItem("universidad");
     const idCarrera = localStorage.getItem("idCarrera");
     const nombreOtraInstitucion = localStorage.getItem("nombreOtraInstitucion");
@@ -82,14 +53,14 @@ function EditarActividades() {
     const datos = Object.fromEntries(formData);
 
     datos.idActivitySubtype = storedData;
-    datos.period = period;
+    datos.idPeriod = period;
     datos.idPerson = idPersona;
 
     if (detalleDocente !== "") {
       datos.descriptionSubtype = detalleDocente;
     }
 
-    if (enlaceVerificacion === "" && nombreOtraInstitucion === "") {
+    if (nombreOtraInstitucion === "") {
       datos.idCareer = idCarrera;
       datos.idFaculty = idFacultad;
       datos.idUniversity = idUniversidad;
@@ -115,7 +86,6 @@ function EditarActividades() {
       </Alert>
 
     }
-
     //Actualizar Actividad
     try {
       const respuesta = await fetch(`${variableEdit}/${params.actividadId}`, {
@@ -126,8 +96,10 @@ function EditarActividades() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(datos),
+        
       });
-
+      const respuestaActualizar = await respuesta.json();
+      console.log(respuestaActualizar)
       if (respuesta.ok) {
         await Swal.fire({
           title: "Actualizado",
@@ -163,7 +135,7 @@ function EditarActividades() {
   return (
     <div>
       <Form onSubmit={handleSubmit}
-        method="put">
+       >
            {errores?.length &&
           errores.map((error, i) => <Error key={i}>{error} </Error>)}
         <FormularioNuevaActividad actividad={actividades} />

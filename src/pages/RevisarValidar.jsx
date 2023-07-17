@@ -6,12 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
+import Checkbox from '@mui/material/Checkbox';
 
 const variableObtenerDocentes = "https://accrualback.up.railway.app/validator/findAllDocentPersonPlans";
 const variableAprobarPlanes = "https://accrualback.up.railway.app/validator/approveAllPlans";
 const variableExcel = "https://accrualback.up.railway.app/validator/generateExcelDocentsInPlan";
+const variableExcelDocentes = "https://accrualback.up.railway.app/validator/generateExcelSelectDocentsActivitiesPlan";
+
 function RevisarValidar() {
 
     const [show, setShow] = useState(false);
@@ -112,6 +116,56 @@ function RevisarValidar() {
     // Definimos las columnas
     const columns = [
         {
+            name: "selection",
+            options: {
+                customHeadRender: () => {
+                    const handleSelectAllClick = () => {
+                        if (selectedRows.length === dataDocentes.length) {
+                            setSelectedRows([]);
+                        } else {
+                            setSelectedRows(dataDocentes.map((docente) => docente.person.idPerson));
+                        }
+                    };
+
+                    const isChecked = selectedRows.length === dataDocentes.length;
+
+                    return (
+                        <th className="header-datatable">
+                            <Checkbox
+                                checked={isChecked}
+                                onChange={handleSelectAllClick}
+                                color="primary"
+                            />
+                        </th>
+                    );
+                },
+                customBodyRender: (value, tableMeta) => {
+                    const rowIndex = tableMeta.rowIndex;
+                    const docente = dataDocentes[rowIndex];
+                    const isSelected = selectedRows.includes(docente.person.idPerson);
+
+                    const handleSelectClick = () => {
+                        const selected = [...selectedRows];
+                        if (isSelected) {
+                            const index = selected.indexOf(docente.person.idPerson);
+                            selected.splice(index, 1);
+                        } else {
+                            selected.push(docente.person.idPerson);
+                        }
+                        setSelectedRows(selected);
+                    };
+
+                    return (
+                        <Checkbox
+                            checked={isSelected}
+                            onChange={handleSelectClick}
+                            color="primary"
+                        />
+                    );
+                },
+            },
+        },
+        {
             name: "#",
             options: {
                 customHeadRender: (columnMeta) => {
@@ -201,6 +255,20 @@ function RevisarValidar() {
         ];
     });
 
+
+    //Checkbox de seleccionar todos
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    const handleSelectAll = (event) => {
+        if (event.target.checked) {
+            const allRows = Array.from({ length: dataDocentes.length }, (_, index) => index);
+            setSelectedRows(allRows);
+        } else {
+            setSelectedRows([]);
+        }
+    };
+
+
     async function downloadDocentes() {
         fetch(`${variableExcel}`, {
             method: 'POST',
@@ -236,6 +304,54 @@ function RevisarValidar() {
             });
     }
 
+    console.log(selectedRows);
+    async function downloadExcelDocentesSeleccionados() {
+        if (selectedRows.length === 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Debe seleccionar docentes para generar el Excel',
+                icon: 'error',
+            });
+        } else {
+            fetch(`${variableExcelDocentes}`, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(selectedRows),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al generar el archivo Excel');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'RegistroDocentes.xlsx');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    Swal.close();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al generar el archivo Excel.',
+                        icon: 'error',
+                    });
+                });
+        }
+    }
+
+
+
     const options = {
         responsive: "standard",
         selectableRows: "none",
@@ -248,6 +364,9 @@ function RevisarValidar() {
                     </IconButton>
                     <IconButton title="Descargar docentes que constan con un plan" onClick={downloadDocentes}>
                         <SimCardDownloadIcon />
+                    </IconButton>
+                    <IconButton title="Descargar Excel de Docentes Seleccionados" onClick={downloadExcelDocentesSeleccionados}>
+                        <DownloadForOfflineIcon />
                     </IconButton>
                 </div>
             );
@@ -283,9 +402,8 @@ function RevisarValidar() {
                 titleAria: "Mostrar/ocultar columnas de la tabla",
             },
             selectedRows: {
-                text: "fila(s) seleccionada(s)",
-                delete: "Eliminar",
-                deleteAria: "Eliminar filas seleccionadas",
+                text: "",
+                delete: "",
             },
         },
     };
@@ -295,6 +413,7 @@ function RevisarValidar() {
         fontSize: '1.5em', // Cambia el tamaño de fuente del título
 
     };
+
     return (
         <div>
             <Navigation />

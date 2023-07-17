@@ -50,32 +50,39 @@ const router = createHashRouter([
             {
                 path: "/actividades/:actividadId/editar",
                 element: <EditarActividades />,
+                errorElement: <ErrorPage />,
                 loader: loaderEditar,
 
             },
             {
                 path: "/actividades/:actividadId/eliminar",
-                action: eliminarActividadAction
+                action: eliminarActividadAction,
+                errorElement: <ErrorPage />
             },
             {
                 path: "/periodos/:idPersona/ver",
-                element: <VerPeriodos />
+                element: <VerPeriodos />,
+                errorElement: <ErrorPage />
             },
             {
                 path: "/solicitudRegistroDevengamiento",
-                element: <SolicitudRegistroDevengamiento />
+                element: <SolicitudRegistroDevengamiento />,
+                errorElement: <ErrorPage />
             },
             {
                 path: "/nuevoDocente",
-                element: <NuevoDocente />
+                element: <NuevoDocente />,
+                errorElement: <ErrorPage />
             },
             {
                 path: "/revisarValidar",
-                element: <RevisarValidar />
+                element: <RevisarValidar />,
+                errorElement: <ErrorPage />
             },
             {
                 path: "/abrirCerrarPeriodos",
-                element: <AbrirCerrarPeriodos />
+                element: <AbrirCerrarPeriodos />,
+                errorElement: <ErrorPage />
             }
         ]
     },

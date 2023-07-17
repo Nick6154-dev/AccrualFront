@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-const variableObtenerActividades = "https://accrualback.up.railway.app/activityPlan";
+const variableObtenerActividades = "https://accrualback.up.railway.app/activityPlanAccrual";
 const variableObtenerInstitucion = "https://accrualback.up.railway.app/institution/withDetailsByIdActivityPlan"
 const variableEliminarActividad = "https://accrualback.up.railway.app/activityPlanAccrual"
 

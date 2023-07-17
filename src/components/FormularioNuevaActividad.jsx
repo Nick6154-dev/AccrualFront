@@ -60,9 +60,9 @@ function FormularioNuevaActividad({ actividad }) {
   const [selectedOption, setselectedOption] = useState("");
   const [valorActividades, setValorActividades] = useState(1);
   const [valorOtraInstitucion, setvalorOtraInstitucion] = useState("");
-  const [valorEnlaceVerificacion, setValorEnlaceVerificacion] = useState("");
   const [valorDetalleActividadDocente, setvalorDetalleActividadDocente] =
     useState("");
+
   function handleChange(event) {
     setValorSelectModal(event.target.value);
 
@@ -75,10 +75,6 @@ function FormularioNuevaActividad({ actividad }) {
 
   function handleChange3(event) {
     setvalorDetalleActividadDocente(event.target.value);
-  }
-
-  function handleChange4(event) {
-    setValorEnlaceVerificacion(event.target.value);
   }
 
   function handleChange5(event) {
@@ -163,8 +159,6 @@ function FormularioNuevaActividad({ actividad }) {
   const nombreOtraInstitucion = valorOtraInstitucion;
   localStorage.setItem("nombreOtraInstitucion", nombreOtraInstitucion);
 
-  const enlaceVerificacionLocal = valorEnlaceVerificacion;
-  localStorage.setItem("enlaceVerificacion", enlaceVerificacionLocal);
 
 
   function cambiarModal() {
@@ -303,22 +297,6 @@ function FormularioNuevaActividad({ actividad }) {
                   name="descriptionActivity"
                   className="form-control"
                   defaultValue={actividad?.activity.description}
-                />
-              </div>
-            </div>
-
-            <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-              <label className="p-2 col-form-label" htmlFor="evidences">
-                Enlace de la evidencia
-              </label>
-              <div className="p-2 col-sm-3">
-                <input
-                  type="url"
-                  required={true}
-                  id="evidences"
-                  name="evidences"
-                  className="form-control"
-                  defaultValue={actividad?.activity.evidences}
                 />
               </div>
             </div>
@@ -676,28 +654,13 @@ function FormularioNuevaActividad({ actividad }) {
                       id="nombreOtraInstitucion"
                       className="form-control"
                       type="text"
+                      placeholder="Otra institución"
                       value={valorOtraInstitucion}
                       onChange={handleChange2}
                     />
                   </div>
                 </div>
-                <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
-                  <label
-                    className="p-2 col-form-label"
-                    htmlFor="enlaceVerificacion"
-                  >
-                    Enlace de verificación
-                  </label>
-                  <div className="p-2 col-sm-6">
-                    <input
-                      id="enlaceVerificacion"
-                      className="form-control"
-                      type="url"
-                      value={valorEnlaceVerificacion}
-                      onChange={handleChange4}
-                    />
-                  </div>
-                </div>
+                
               </Modal.Body>
               <Modal.Footer>
                 <Button
