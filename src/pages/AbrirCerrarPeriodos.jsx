@@ -6,14 +6,12 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import Switch from "react-switch";
 
-
 const variableObtenerPeriodos = "https://accrualback.up.railway.app/period";
 const variableNuevoPeriodo = "https://accrualback.up.railway.app/period/save";
 const variableCerrarPeriodo = "https://accrualback.up.railway.app/period/switchActivePeriod";
 const variableEliminarPeriodo = "https://accrualback.up.railway.app/period/deletePeriodById";
-
+const variableCambiarModo = "https://accrualback.up.railway.app/period/switchStatePeriod";
 function AbrirCerrarPeriodos() {
-
 
     const [dataPeriodo, setDataPeriodo] = useState([]);
     const [idPeriodo, setIdPeriodo] = useState("");
@@ -34,10 +32,9 @@ function AbrirCerrarPeriodos() {
 
     //Validar un solo periodo
     const [existePeriodoActivo, setExistePeriodoActivo] = useState(false);
-    const [existePeriodoCerrado, setExistePeriodoCerrado] = useState(false);
-    const [periodoActivo, setPeriodoActivo] = useState("");
-    const [estadoPeriodoActual, setEstadoPeriodoActual] = useState();
     const [estadosPeriodos, setEstadosPeriodos] = useState([]);
+    const [modoPeriodo, setModoPeriodo] = useState([]);
+
     //Validar que se ingrese el periodo
     const [errorFormato, setErrorFormato] = useState(false);
 
@@ -66,6 +63,18 @@ function AbrirCerrarPeriodos() {
                 },
             });
             const data1 = await response.json();
+
+            // Ordenar los periodos activos primero
+            data1.sort((a, b) => {
+                if (a.active && !b.active) {
+                    return -1; // a está activo, b está inactivo
+                } else if (!a.active && b.active) {
+                    return 1; // a está inactivo, b está activo
+                } else {
+                    return 0; // ambos están activos o inactivos, no se cambia el orden
+                }
+            });
+
             setDataPeriodo(data1);
 
             // Actualiza los estados de los periodos individuales
@@ -74,6 +83,13 @@ function AbrirCerrarPeriodos() {
                 active: periodo.active,
             }));
             setEstadosPeriodos(estados);
+
+            // Actualiza los estados de los periodos individuales
+            const modo = data1.map((periodo) => ({
+                idPeriodo: periodo.idPeriod,
+                state: periodo.state,
+            }));
+            setModoPeriodo(modo)
 
             const existeActivo = data1.some((periodo) => periodo.active === true);
             setExistePeriodoActivo(existeActivo);
@@ -96,7 +112,6 @@ function AbrirCerrarPeriodos() {
     const handleShow = () => {
         setShow(true);
     };
-
     const datosNuevoPeriodo = {
         idPeriod: null,
         valuePeriod: nuevoPeriodo,
@@ -160,9 +175,7 @@ function AbrirCerrarPeriodos() {
                     title: "Agregado",
                     text: "El nuevo periodo se ha agregado",
                     icon: "success",
-
                     confirmButtonColor: "#3085d6",
-
                 });
                 window.location.reload();
             } else {
@@ -198,12 +211,20 @@ function AbrirCerrarPeriodos() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-
             });
 
             if (respuesta.ok) {
                 obtenerPeriodos();
-
+                // Reordenar los periodos activos primero
+                dataPeriodo.sort((a, b) => {
+                    if (a.active && !b.active) {
+                        return -1; // a está activo, b está inactivo
+                    } else if (!a.active && b.active) {
+                        return 1; // a está inactivo, b está activo
+                    } else {
+                        return 0; // ambos están activos o inactivos, no se cambia el orden
+                    }
+                });
             } else {
                 await Swal.fire({
                     title: "Error",
@@ -226,6 +247,44 @@ function AbrirCerrarPeriodos() {
         return null;
     }
 
+    // Cambiar el modo del periodo
+    async function handleModo(idPeriodo) {
+
+        try {
+            const respuesta = await fetch(`${variableCambiarModo}/${idPeriodo}`, {
+                method: "PATCH",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (respuesta.ok) {
+                obtenerPeriodos();
+            } else {
+                await Swal.fire({
+                    title: "Error",
+                    text: "No se ha podido Cambiar de modo al periodo",
+                    icon: "error",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "OK",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            await Swal.fire({
+                title: "Error",
+                text: "Ocurrió un error al cambiar el modo del periodo",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK",
+            });
+        }
+        return null;
+    }
+
+
     const handleShow2 = (periodo) => {
         const estadoPeriodo = periodo.active;
         const idPeriodo = periodo.idPeriod;
@@ -236,9 +295,23 @@ function AbrirCerrarPeriodos() {
                     ? { ...estado, active: !estadoPeriodo }
                     : estado
             )
-
         );
         handleCerrar(idPeriodo);
+    };
+
+    const handleShow3 = (periodo) => {
+        const modoPeriodo = periodo.state;
+        const nuevoModo = !modoPeriodo;
+        const idPeriodo = periodo.idPeriod;
+
+
+        setModoPeriodo((modos) =>
+            modos.map((modo) =>
+                modo.idPeriodo === idPeriodo ? { ...modo, state: !modo.state }
+                    : modo
+            )
+        );
+        handleModo(idPeriodo);
     };
     // Definimos las columnas
     const columns = [
@@ -273,7 +346,7 @@ function AbrirCerrarPeriodos() {
             },
         },
         {
-            name: "Abrir/Cerrar",
+            name: "ABRIR/CERRAR",
             options: {
                 customHeadRender: (columnMeta) => {
                     return <th className="header-datatable">{columnMeta.label}</th>;
@@ -293,9 +366,54 @@ function AbrirCerrarPeriodos() {
                                     )?.active || false
                                 }
                                 disabled={existePeriodoActivo && !periodo.active}
-                                className="react-switch"
 
+                                //Estilos 
+                                offColor="#E20D23"
+                                onColor="#0AB624"
+                                offHandleColor="#FFFFFF"
+                                onHandleColor="#FFFFFF"
+
+                                className="react-switch"
                             />
+                        </div>
+                    );
+                },
+            },
+        },
+        {
+            name: "CAMBIAR MODO",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return <th className="header-datatable">{columnMeta.label}</th>;
+                },
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    const rowIndex = tableMeta.rowIndex;
+                    const periodo = dataPeriodo[rowIndex];
+
+                    const idPeriodo = periodo.idPeriod;
+                    setIdPeriodo(idPeriodo);
+                    return (
+                        <div>
+                            <div className="d-flex align-items-center justify-content-center">
+                                <span className="p-2">Registro</span>
+                                <Switch
+                                    onChange={() => handleShow3(periodo, idPeriodo)}
+                                    checked={
+                                        modoPeriodo.find(
+                                            (modo) => modo.idPeriodo === periodo.idPeriod)?.state || false
+                                    }
+                                    disabled={existePeriodoActivo && !periodo.active}
+
+                                    // Estilos 
+                                    offColor="#0F55E1"
+                                    onColor="#A50FE1"
+                                    offHandleColor="#FFFFFF"
+                                    onHandleColor="#FFFFFF"
+
+                                    className="react-switch"
+                                />
+                                <span className="p-2">Evidencias</span>
+                            </div>
                         </div>
                     );
                 },
@@ -365,31 +483,29 @@ function AbrirCerrarPeriodos() {
                         }
                     };
                     return (
-                        <Button variant="warning" onClick={handleEliminar} >
+                        <Button variant="warning" onClick={handleEliminar}>
                             Eliminar Periodo
                         </Button>
-
                     );
                 },
             },
-        }
+        },
     ];
 
     const transformedData = dataPeriodo.map((periodo, index) => {
         return [
-            
             index + 1, // Columna #
             periodo.valuePeriod,
             periodo.active !== false ? 'Abierto' : 'Cerrado', // Transforma el valor a "Abierto" o "Cerrado"
         ];
     });
+
     const options = {
         responsive: "standard",
         selectableRows: "none",
         pagination: true,
         sort: false,
         textLabels: {
-
             pagination: {
                 next: "Siguiente",
                 previous: "Anterior",
@@ -417,10 +533,8 @@ function AbrirCerrarPeriodos() {
                 delete: "Eliminar",
                 deleteAria: "Eliminar filas seleccionadas",
             },
-
         },
     };
-
 
     const titleStyles = {
         color: '#0076bd', // Cambia el color del título a azul
@@ -439,65 +553,42 @@ function AbrirCerrarPeriodos() {
                 data={transformedData}
                 columns={columns}
                 options={options}
-
             />
+
             <div className="py-3 mx-4">
-                <Button variant="primary" onClick={handleShow}>Agregar Nuevo Periodo</Button>
+                <Button variant="primary" onClick={handleShow}>
+                    Agregar Nuevo Periodo
+                </Button>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Periodo</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <div className={`form-group m-2 ${errorFormato ? 'has-error' : ''}`}>
+                            <label htmlFor="nuevoPeriodo">Ingresar el nuevo periodo</label>
+                            <input
+                                type="text"
+                                required
+                                className="form-control my-3"
+                                id="nuevoPeriodo"
+                                placeholder="2022-2023"
+                                value={nuevoPeriodo}
+                                onChange={event => setNuevoPeriodo(event.target.value)}
+                            />
+
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>Cerrar</Button>
+                        <Button variant="primary" onClick={handleNuevoPeriodo}>Agregar Periodo</Button>
+                    </Modal.Footer>
+                </Modal>
+
             </div>
-
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Periodo</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <div className={`form-group m-2 ${errorFormato ? 'has-error' : ''}`}>
-                        <label htmlFor="nuevoPeriodo">Ingresar el nuevo periodo</label>
-                        <input
-                            type="text"
-                            required
-                            className="form-control my-3"
-                            id="nuevoPeriodo"
-                            placeholder="2022-2023"
-                            value={nuevoPeriodo}
-                            onChange={event => setNuevoPeriodo(event.target.value)}
-                        />
-
-                    </div>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>Cerrar</Button>
-                    <Button variant="primary" onClick={handleNuevoPeriodo}>Agregar Periodo</Button>
-                </Modal.Footer>
-            </Modal>
-
-
-            <Modal show={show2} onHide={handleClose2}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmación</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-
-                    <div className="form-group m-2">
-                        <p>Abrir/Cerrar periodos</p>
-                        <p>Recuerda que al cerrar el periodo, este no se podrá utilizar para los planes, por lo que tendrás que abrirlo para usarlo.</p>
-                        <p>Presiona aceptar para continuar.</p>
-
-                    </div>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose2}>Cerrar</Button>
-                    <Button variant="primary" onClick={handleCerrar} >Aceptar</Button>
-                </Modal.Footer>
-
-            </Modal>
-
-
         </div>
-    )
+    );
 }
 
 export default AbrirCerrarPeriodos;

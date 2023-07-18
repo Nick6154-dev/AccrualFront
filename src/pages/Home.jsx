@@ -14,6 +14,8 @@ function Home() {
   const [periodosAbiertos, setPeriodosAbiertos] = useState("");
   const [idPeriodo, setIdPeriodo] = useState("");
   const [idPlan, setIdPlan] = useState("");
+  const [modo, setModo] = useState("");
+  const [activo, setActivo] = useState("");
 
   //Obtenemos el Token con estado
   const token = sessionStorage.getItem("token");
@@ -32,6 +34,8 @@ function Home() {
     };
   }, []);
 
+  //Consulta para obtener periodos
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,6 +48,18 @@ function Home() {
           },
         });
         const periodosData = await responsePeriodos.json();
+        (periodosData);
+        const activoObtenido = periodosData[0].active;
+        const modoObtenido = periodosData[0].state;
+        localStorage.setItem("modoSistema", modoObtenido);
+        if (activoObtenido === true) {
+          setActivo("Plan activado para registrar actividades")
+        }
+        if (modoObtenido === true) {
+          setModo("Etapa de registro");
+        } if (modoObtenido === false) {
+          setModo("Etapa de ingresar evidencias");
+        }
         setPeriodosAbiertos(periodosData[0].valuePeriod);
         setIdPeriodo(periodosData[0].idPeriod);
 
@@ -58,7 +74,7 @@ function Home() {
         if (responseIdPlan.ok) {
           const idPlanData = await responseIdPlan.json();
           setIdPlan(idPlanData.idPlan);
-         
+
         } else {
           throw new Error('Error en la consulta Fetch');
         }
@@ -95,19 +111,31 @@ function Home() {
           Bienvenido al Sistema de Seguimiento a Devengamientos de los Docentes
         </h4>
       </div>
-      <div className="d-flex flex-column justify-content-center align-items-center ">
+      <div className="d-flex flex-row justify-content-center align-items-center ">
         {periodosAbiertos === "" ? (
-          <Alert variant="danger" className="col-sm-3 text-center">
-            No existen periodos activos
-          </Alert>
-        ) : (
-          <Alert variant="primary" className="col-sm-3 text-center">
-            Periodo Activo: <h3>{periodosAbiertos}</h3>
-          </Alert>
-        )}
 
+          <Alert variant="danger" className="p-2 m-4 text-center">
+            <h5>No existen periodos activos</h5>
+            <p>Plan inhabilitado para agregar nuevas actividades</p>
+          </Alert>
+
+        ) : (
+
+
+          <Alert variant="primary" className="p-2 text-center">
+            Periodo Activo: <h3>{periodosAbiertos}</h3>
+
+            <p>{activo}</p>
+          </Alert>
+
+        )}
+        <div class="d-flex flex-row-reverse bd-highlight">
+          <Alert variant="primary" className="p-2 m-5 bd-highlighttext-center">
+            <h5>{modo}</h5>
+          </Alert>
+        </div>
       </div>
-      <div className="row justify-content-md-center align-items-center m-4 border border-secondar">
+      <div className="row justify-content-md-center align-items-center m-4 p-3 border border-secondar">
         <div className="col-md-auto m-4 image">
           <img className=" p-1" src={image} alt="imagen uce" width="200" />
         </div>

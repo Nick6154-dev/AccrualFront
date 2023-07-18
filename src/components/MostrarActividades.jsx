@@ -1,4 +1,3 @@
-import Table from "react-bootstrap/Table";
 import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -10,11 +9,11 @@ import MUIDataTable from 'mui-datatables';
 import Swal from "sweetalert2";
 
 
-const variableObtenerActividades =
-  "https://accrualback.up.railway.app/activityPlanAccrual/byPlan";
+const variableObtenerActividades = "https://accrualback.up.railway.app/activityPlanAccrual/byPlan";
 
-const variableNoEditable =
-  "https://accrualback.up.railway.app/plan/updatePlanNotEditable";
+const variableNoEditable = "https://accrualback.up.railway.app/plan/updatePlanNotEditable";
+
+const variableEnviarEvidencias = "https://accrualback.up.railway.app/activityPlanAccrual/validateActivity";
 
 export async function action({ params }) {
   await eliminarActividad(params.actividadId);
@@ -24,6 +23,7 @@ export async function action({ params }) {
 
 function MostrarActividades() {
   const period = localStorage.getItem("periodosAbiertos");
+  const modoSistema = localStorage.getItem("modoSistema");
 
   //Obtenemos el Token con estado
   const [token, setToken] = useState(sessionStorage.getItem("token"));
@@ -52,28 +52,36 @@ function MostrarActividades() {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
-  //Obtenemos el idPlan con estado
-  const [idPlan, setIdPlan] = useState(sessionStorage.getItem("idPlan"));
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setIdPlan(sessionStorage.getItem("idPlan"));
-    };
 
-    window.addEventListener("storage", handleStorageChange);
+  const idPeriodo = localStorage.getItem("idPeriodo");
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
-  const idPeriodo= localStorage.getItem("idPeriodo");
-
+  // Modal1 
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  //Modal 2
+  const [show2, setShow2] = useState(false);
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+
   const [dataActividad, setDataActividad] = useState([]);
+  const [existeOtraInstitucion, setExisteOtraInstitucion] = useState("");
+  const [idActividadPlan, setIdActividadPlan] = useState();
+  
+  //Para enlaces de evidencias
+  const [valorEnlaceEvidencia, setValorEnlaceEvidencia] = useState("");
+  const [valorEnlaceVerificacion, setValorEnlaceVerificacion] = useState("");
+
+  function handleChange(event) {
+    setValorEnlaceEvidencia(event.target.value);
+  }
+
+  function handleChange2(event) {
+    setValorEnlaceVerificacion(event.target.value);
+  }
+
 
   // Consultas para datos de la actividad de devengamiento
   const useLoaderData1 = () => {
@@ -92,7 +100,10 @@ function MostrarActividades() {
         );
 
         const dataActividades = await response1.json();
+        console.log(dataActividades);
         setDataActividad(dataActividades);
+
+
       } catch (error) {
         console.log(error);
       }
@@ -110,7 +121,7 @@ function MostrarActividades() {
   async function handleEnviar() {
     try {
       const respuesta = await fetch(
-        `${variableNoEditable}/${idPersona},${period}`,
+        `${variableNoEditable}/${idPersona},${idPeriodo}`,
         {
           method: "PATCH",
           mode: "cors",
@@ -132,6 +143,63 @@ function MostrarActividades() {
         window.location.href = "/#/mostrarActividades";
       } else {
         await Swal.fire({
+          title: "Error",
+          text: "Ocurrió un error al enviar el formulario",
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      await Swal.fire({
+        title: "Error",
+        text: "Ocurrió un error al guardar el formulario",
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+    }
+    return null;
+  }
+
+  //creando objeto para enviar
+  const datosEvidencias = {
+    "evidences": valorEnlaceEvidencia,
+    "verificationLink": valorEnlaceVerificacion
+  }
+
+  console.log(datosEvidencias)
+  //Enviar Evidencias
+  async function handleEnviarEvidencias() {
+    try {
+      const respuesta = await fetch(
+        `${variableEnviarEvidencias}/${idActividadPlan}`,
+        {
+          method: "PATCH",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(datosEvidencias),
+        }
+      );
+      if (respuesta.ok) {
+        Swal.fire({
+          title: "Enviado",
+          text: "Evidencias enviadas",
+          icon: "success",
+
+          confirmButtonColor: "#3085d6",
+        });
+
+        setValorEnlaceEvidencia("")
+        setValorEnlaceVerificacion("")
+       
+        window.location.href = "/#/mostrarActividades";
+      } else {
+        Swal.fire({
           title: "Error",
           text: "Ocurrió un error al enviar el formulario",
           icon: "error",
@@ -269,7 +337,7 @@ function MostrarActividades() {
           };
           return (
             <div>
-              <div class="d-grid gap-2 d-sm-block">
+              <div className="d-grid gap-2 d-sm-block">
                 <Button variant="primary" className=" mx-1 btn-block" onClick={() =>
                   navigate(
                     `/actividades/${idActividad}/editar`
@@ -287,7 +355,43 @@ function MostrarActividades() {
       },
     }
   ];
- console.log(datosActividadPlan);
+
+  if (modoSistema === "false") {
+    columns.pop();
+    // Agregar la columna "Agregar Evidencias" al arreglo columns
+    columns.push({
+      name: " ",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+        customBodyRender: (value, tableMeta, updateValue) => {
+          const rowIndex = tableMeta.rowIndex;
+          const actividad = datosActividadPlan[rowIndex];
+
+
+          const handleAgregarEvidencias = () => {
+            const institutionName = actividad.institutionPlan.institution.institutionName;
+            setExisteOtraInstitucion(institutionName);
+
+            setIdActividadPlan(actividad.activityPlan.activity.idActivity);
+            // Aquí puedes hacer lo que necesites con el valor de institutionName
+            // Por ejemplo, pasarlo a la función handleShow2
+            handleShow2(institutionName);
+          };
+          return (
+            <div>
+              <Button variant="success" className="mx-1 btn-block my-2" onClick={handleAgregarEvidencias}>
+                Agregar Evidencias
+              </Button>
+            </div>
+          );
+        },
+      },
+    });
+  }
   //Datos para el dataTable
   const transformedData = datosActividadPlan.map((actividades, index) => {
     return [
@@ -304,7 +408,7 @@ function MostrarActividades() {
   });
 
   const options = {
-  
+
     responsive: "standard",
     selectableRows: "none",
     pagination: true,
@@ -346,7 +450,6 @@ function MostrarActividades() {
     },
   };
 
-
   return (
     <div>
       <Navigation />
@@ -387,9 +490,73 @@ function MostrarActividades() {
               </Button>
             </Modal.Footer>
           </Modal>
+
+          <Modal show={show2} onHide={handleClose2}>
+            <Modal.Header closeButton>
+              <Modal.Title>Evidencias</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <div>
+                <form onSubmit={handleEnviarEvidencias}>
+                  <div className="form-group  d-flex flex-column justify-content-center align-items-center py-1">
+                    <label
+                      className="p-1 col-form-label"
+                      htmlFor="evidencies"
+                    >
+                      Enlace de evidencia de la actividad realizada:
+                    </label>
+                    <div className="p-1 col-sm-7">
+                      <input
+                        type="url"
+                        required={true}
+                        id="evidencies"
+                        name="evidencies"
+                        className="form-control"
+                        placeholder="http://google.com"
+                        onChange={handleChange}
+                        value={valorEnlaceEvidencia}
+                      />
+                    </div>
+                  </div>
+                  {existeOtraInstitucion !== "Universidad Central del Ecuador" ? (
+
+                    <div className="form-group  d-flex flex-column justify-content-center align-items-center py-3">
+                      <label
+                        className="p-1 col-form-label"
+                        htmlFor="verificationLink"
+                      >
+                        Enlace de verificación
+                      </label>
+                      <div className="col-sm-7">
+                        <input
+                          type="url"
+                          required={true}
+                          id="verificationLink"
+                          name="verificationLink"
+                          className="form-control"
+                          placeholder="http://google.com"
+                          onChange={handleChange2}
+                          value={valorEnlaceVerificacion}
+                        />
+                      </div>
+                    </div>
+                  ) : ("")}
+                  <div className="text-center py-3">
+                    <Button type="submit"  variant="primary" >Enviar Evidencias</Button>
+                  </div>
+                </form>
+              </div>
+
+            </Modal.Body>
+
+            <Modal.Footer>
+
+            </Modal.Footer>
+          </Modal>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

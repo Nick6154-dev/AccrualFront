@@ -246,6 +246,7 @@ function RevisarValidar() {
     // Transformar los datos para que coincidan con las columnas del DataTable
     const transformedData = dataDocentes.map((docente, index) => {
         return [
+            "",
             index + 1, // Columna #
             docente.person.identification, // Columna Cédula
             docente.person.name, // Columna Nombres

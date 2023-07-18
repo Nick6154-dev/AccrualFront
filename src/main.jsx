@@ -14,6 +14,8 @@ import NuevaActividadDevengamiento, { action as actionActividadDevengamiento } f
 import EditarActividades, {
     loader as loaderEditar
 } from '../src/pages/EditarActividades'
+
+import DocentesRegistroSistema from '../src/pages/DocentesRegistroSistema'
 import MostrarActividades from "../src/components/MostrarActividades"
 import ErrorPage from '../src/components/ErrorPage'
 import { action as eliminarActividadAction } from '../src/components/MostrarActividades'
@@ -83,7 +85,13 @@ const router = createHashRouter([
                 path: "/abrirCerrarPeriodos",
                 element: <AbrirCerrarPeriodos />,
                 errorElement: <ErrorPage />
+            },
+            {
+                path: "/verDocentesRegistroSistema",
+                element: <DocentesRegistroSistema />,
+                errorElement: <ErrorPage />
             }
+
         ]
     },
     {

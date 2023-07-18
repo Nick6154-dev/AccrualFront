@@ -285,7 +285,10 @@ function VerPeriodos() {
     const handleRadioChange = (event) => {
         setSelectedValue(event.target.value);
         if (event.target.value === '1') {
-            setTextareaValue('aprobado');
+            setTextareaValue('Aprobado Planificación');
+        }
+        if (event.target.value === '3') {
+            setTextareaValue('Aprobado Evidencias');
         }
     };
 
@@ -416,20 +419,36 @@ function VerPeriodos() {
 
                 <Modal.Body>
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="1"
+                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio1" value="1"
                             checked={selectedValue === '1'}
                             onChange={handleRadioChange}
                         />
-                        <label className="form-check-label" htmlFor="exampleRadios1">
-                            Aprobar
+                        <label className="form-check-label" htmlFor="radio1">
+                            Aprobar Planificación
                         </label>
                     </div>
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="2"
+                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio2" value="2"
                             checked={selectedValue === '2'}
                             onChange={handleRadioChange} />
-                        <label className="form-check-label" htmlFor="exampleRadios2">
-                            Denegar
+                        <label className="form-check-label" htmlFor="radio2">
+                            Denegar Planificación
+                        </label>
+                    </div>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio3" value="3"
+                            checked={selectedValue === '3'}
+                            onChange={handleRadioChange} />
+                        <label className="form-check-label" htmlFor="radio3">
+                            Aprobar Evidencias
+                        </label>
+                    </div>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio4" value="4"
+                            checked={selectedValue === '4'}
+                            onChange={handleRadioChange} />
+                        <label className="form-check-label" htmlFor="radio4">
+                            Denegar Evidencias
                         </label>
                     </div>
                     <div className="form-group m-2">

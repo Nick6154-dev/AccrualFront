@@ -152,6 +152,7 @@ function Navigation() {
                 <Link to="/nuevoDocente" className="dropdown-item">Nuevo Docente</Link>
                 <Link to="/revisarValidar" className="dropdown-item">Revisar y Validar </Link>
                 <Link to="/abrirCerrarPeriodos" className="dropdown-item">Abrir/Cerrar periodos </Link>
+                <Link to="/verDocentesRegistroSistema" className="dropdown-item"> Ver solicitudes de registro al sistema</Link>
               </NavDropdown>
               )}
               <Nav.Link onClick={cerrar}>Cerrar Sesión</Nav.Link>
