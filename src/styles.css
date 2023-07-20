@@ -1,0 +1,86 @@
+h3 {
+    color: #0076bd
+}
+
+h2 {
+    font-size: 1.7rem;
+}
+
+/*Header*/
+.header {
+    background-image: url(./img/plantillaCabecera.png);
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: cover;
+    padding: 2.5rem;
+}
+
+.footer {
+
+    background-image: url(./img/plantillaPie.png);
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: cover;
+
+    padding: 2rem;
+}
+
+@media (max-width: 375px) {
+    .header {
+        background-size: auto;
+
+        background-position: center center;
+        text-align: right;
+    }
+
+    h3 {
+        font-size: 1.5em;
+      
+    }
+     .footer {
+        background-size: auto;
+        text-align: right;
+        background-position: center center;
+    }
+}
+
+@media (max-width: 428px) { 
+    .header {
+        background-size: auto;
+        background-position: center center;
+        text-align: right;
+    }
+
+    h3 {
+        font-size: 1.5em;
+      
+    }
+
+  }
+
+.text {
+    color: #0076bd;
+}
+
+.label-form{
+    font-size: 1.2rem;
+}
+
+.link-registro{
+    font-size: 1.1rem;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 5rem;
+}
+
+.stateText{
+    font-weight: 700;
+    font-size: 1rem;
+    color: #0076bd;
+}
+.header-datatable{
+    padding: 0.8rem;
+    color: #0076bd;
+    font-weight: 650;
+    font-size: 1.2rem;
+}
