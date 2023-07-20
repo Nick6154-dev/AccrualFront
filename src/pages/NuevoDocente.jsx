@@ -7,13 +7,13 @@ function NuevoDocente() {
 
     const variableFacultad = "https://accrualback.up.railway.app/faculty/withoutToken";
     const variableNuevoDocente = "https://accrualback.up.railway.app/register/ByAnotherOne";
+    
+    const probando = "https://accrualback.up.railway.app/register/ByAnotherOne";
 
     //Obtener datos generales del docente
-<<<<<<< HEAD
-    const [valorSelectFacultad, setvalorSelectFacultad] = useState(0);
-=======
+
     const [valorSelectFacultad, setvalorSelectFacultad] = useState(1);
->>>>>>> 974ac2f9657ca7da3fe4df3767cb7f990a9233ac
+
     const [valorCedula, setValorCedula] = useState("");
     const [valorNombres, setValorNombres] = useState("");
     const [valorApellidos, seValorApellidos] = useState("");
@@ -66,23 +66,9 @@ function NuevoDocente() {
         }
     }
 
-<<<<<<< HEAD
+
     console.log(datosSubmit);
 
-    //Obtenemos el Token con estado
-    const [token, setToken] = useState(sessionStorage.getItem("token"));
-    useEffect(() => {
-        const handleStorageChange = () => {
-            setToken(sessionStorage.getItem("token"));
-        };
-
-        window.addEventListener("storage", handleStorageChange);
-
-        return () => {
-            window.removeEventListener("storage", handleStorageChange);
-        };
-    }, []);
-=======
 //Obtenemos el Token con estado
 const [token, setToken] = useState(sessionStorage.getItem("token"));
 useEffect(() => {
@@ -96,7 +82,6 @@ useEffect(() => {
     window.removeEventListener("storage", handleStorageChange);
   };
 }, []);
->>>>>>> 974ac2f9657ca7da3fe4df3767cb7f990a9233ac
 
     //Consulta a facultades sin token
     useEffect(() => {
@@ -167,11 +152,7 @@ useEffect(() => {
         }
         return null;
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 974ac2f9657ca7da3fe4df3767cb7f990a9233ac
     return (
         <div>
             <Navigation />
@@ -245,7 +226,7 @@ useEffect(() => {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-<<<<<<< HEAD
+
                                     <label className="py-4 my-1 text-muted label-form" htmlFor="modalidad">Modalidad de devengamiento:</label>
                                     <select
                                         id="modalidad"
@@ -258,21 +239,21 @@ useEffect(() => {
                                         <option value="Medio tiempo (combinado)">Medio tiempo (combinado)</option>
                                     </select>
 
-=======
+
                                     <div className="form-group p-3 m-2">
                                         <label className="py-3 text-muted label-form" htmlFor="modalidad">Modalidad de devengamiento:</label>
                                         <input type="text" required className="form-control" id="modalidad" placeholder="Ingrese la modalidad de devengamiento"
                                             value={valorModalidad}
                                             onChange={handleChange6} />
                                     </div>
->>>>>>> 974ac2f9657ca7da3fe4df3767cb7f990a9233ac
+
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-md-4">
                                     <div className="form-group p-3 m-2">
                                         <label className="py-3 text-muted label-form" htmlFor="categoria">Categoría del Docente:</label>
-<<<<<<< HEAD
+
                                         <select
                                             id="categoria"
                                             required={true}
@@ -287,11 +268,11 @@ useEffect(() => {
                                             <option value="Agregado 3">Agregado 3</option>
                                             <option value="Principal">Principal</option>
                                         </select>
-=======
+
                                         <input type="text" required className="form-control" id="categoria" placeholder="Ingrese la categoría del docente"
                                             value={valorCategoria}
                                             onChange={handleChange7} />
->>>>>>> 974ac2f9657ca7da3fe4df3767cb7f990a9233ac
+
                                     </div>
                                 </div>
                             </div>
