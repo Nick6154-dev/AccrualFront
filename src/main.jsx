@@ -10,7 +10,10 @@ import NuevoDocente from './pages/NuevoDocente'
 import RevisarValidar from './pages/RevisarValidar'
 import AbrirCerrarPeriodos from './pages/AbrirCerrarPeriodos'
 import MostrarDatosDocente from '../src/components/MostrarDatosDocente'
+<<<<<<< HEAD
 import CambiarModo from './pages/CambiarModo'
+=======
+>>>>>>> 974ac2f9657ca7da3fe4df3767cb7f990a9233ac
 import NuevaActividadDevengamiento, { action as actionActividadDevengamiento } from '../src/pages/NuevaActividadDevengamiento'
 import EditarActividades, {
     loader as loaderEditar
@@ -68,11 +71,14 @@ const router = createHashRouter([
                 errorElement: <ErrorPage />
             },
             {
+<<<<<<< HEAD
                 path: "/periodos/:idPeriodo/cambiarModo",
                 element: <CambiarModo />,
                 errorElement: <ErrorPage />
             },
             {
+=======
+>>>>>>> 974ac2f9657ca7da3fe4df3767cb7f990a9233ac
                 path: "/solicitudRegistroDevengamiento",
                 element: <SolicitudRegistroDevengamiento />,
                 errorElement: <ErrorPage />
