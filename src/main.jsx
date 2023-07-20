@@ -10,6 +10,7 @@ import NuevoDocente from './pages/NuevoDocente'
 import RevisarValidar from './pages/RevisarValidar'
 import AbrirCerrarPeriodos from './pages/AbrirCerrarPeriodos'
 import MostrarDatosDocente from '../src/components/MostrarDatosDocente'
+
 import CambiarModo from './pages/CambiarModo'
 import NuevaActividadDevengamiento, { action as actionActividadDevengamiento } from '../src/pages/NuevaActividadDevengamiento'
 import EditarActividades, {
@@ -73,6 +74,7 @@ const router = createHashRouter([
                 errorElement: <ErrorPage />
             },
             {
+
                 path: "/solicitudRegistroDevengamiento",
                 element: <SolicitudRegistroDevengamiento />,
                 errorElement: <ErrorPage />

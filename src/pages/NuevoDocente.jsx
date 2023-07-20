@@ -7,8 +7,6 @@ function NuevoDocente() {
 
     const variableFacultad = "https://accrualback.up.railway.app/faculty/withoutToken";
     const variableNuevoDocente = "https://accrualback.up.railway.app/register/ByAnotherOne";
-    
-    const prueba = "https://accrualback.up.railway.app/register/ByAnotherOne";
 
     //Obtener datos generales del docente
     const [valorSelectFacultad, setvalorSelectFacultad] = useState(0);
