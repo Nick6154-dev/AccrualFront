@@ -10,6 +10,7 @@ import NuevoDocente from './pages/NuevoDocente'
 import RevisarValidar from './pages/RevisarValidar'
 import AbrirCerrarPeriodos from './pages/AbrirCerrarPeriodos'
 import MostrarDatosDocente from '../src/components/MostrarDatosDocente'
+import CambiarModo from './pages/CambiarModo'
 import NuevaActividadDevengamiento, { action as actionActividadDevengamiento } from '../src/pages/NuevaActividadDevengamiento'
 import EditarActividades, {
     loader as loaderEditar
@@ -64,6 +65,11 @@ const router = createHashRouter([
             {
                 path: "/periodos/:idPersona/ver",
                 element: <VerPeriodos />,
+                errorElement: <ErrorPage />
+            },
+            {
+                path: "/periodos/:idPeriodo/cambiarModo",
+                element: <CambiarModo />,
                 errorElement: <ErrorPage />
             },
             {

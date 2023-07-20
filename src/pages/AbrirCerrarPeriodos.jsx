@@ -5,18 +5,20 @@ import MUIDataTable from 'mui-datatables';
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import Switch from "react-switch";
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import ToggleButton from 'react-bootstrap/ToggleButton';
+import { useNavigate } from "react-router-dom";
 
-const variableObtenerPeriodos = "https://accrualback.up.railway.app/period";
+const variableObtenerPeriodos = "https://accrualback.up.railway.app/period/findAllWithDetails";
 const variableNuevoPeriodo = "https://accrualback.up.railway.app/period/save";
 const variableCerrarPeriodo = "https://accrualback.up.railway.app/period/switchActivePeriod";
 const variableEliminarPeriodo = "https://accrualback.up.railway.app/period/deletePeriodById";
 const variableCambiarModo = "https://accrualback.up.railway.app/period/switchStatePeriod";
+
 function AbrirCerrarPeriodos() {
 
     const [dataPeriodo, setDataPeriodo] = useState([]);
     const [idPeriodo, setIdPeriodo] = useState("");
+
+    const navigate = useNavigate();
 
     //Variables del modal
     const [show, setShow] = useState(false);
@@ -68,9 +70,9 @@ function AbrirCerrarPeriodos() {
 
             // Ordenar los periodos activos primero
             data1.sort((a, b) => {
-                if (a.active && !b.active) {
+                if (a.period.active && !b.period.active) {
                     return -1; // a está activo, b está inactivo
-                } else if (!a.active && b.active) {
+                } else if (!a.period.active && b.period.active) {
                     return 1; // a está inactivo, b está activo
                 } else {
                     return 0; // ambos están activos o inactivos, no se cambia el orden
@@ -81,19 +83,13 @@ function AbrirCerrarPeriodos() {
 
             // Actualiza los estados de los periodos individuales
             const estados = data1.map((periodo) => ({
-                idPeriodo: periodo.idPeriod,
-                active: periodo.active,
+                idPeriodo: periodo.period.idPeriod,
+                active: periodo.period.active,
             }));
             setEstadosPeriodos(estados);
 
-            // Actualiza los estados de los periodos individuales
-            const modo = data1.map((periodo) => ({
-                idPeriodo: periodo.idPeriod,
-                state: periodo.state,
-            }));
-            setModoPeriodo(modo)
 
-            const existeActivo = data1.some((periodo) => periodo.active === true);
+            const existeActivo = data1.some((periodo) => periodo.period.active === true);
             setExistePeriodoActivo(existeActivo);
 
             const periodosActivos = data1
@@ -288,8 +284,8 @@ function AbrirCerrarPeriodos() {
 
 
     const handleShow2 = (periodo) => {
-        const estadoPeriodo = periodo.active;
-        const idPeriodo = periodo.idPeriod;
+        const estadoPeriodo = periodo.period.active;
+        const idPeriodo = periodo.period.idPeriod;
 
         setEstadosPeriodos((estados) =>
             estados.map((estado) =>
@@ -300,7 +296,6 @@ function AbrirCerrarPeriodos() {
         );
         handleCerrar(idPeriodo);
     };
-
 
     // Definimos las columnas
     const columns = [
@@ -334,6 +329,17 @@ function AbrirCerrarPeriodos() {
                 },
             },
         },
+
+        {
+            name: "MODO ACTUAL",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
         {
             name: "ABRIR/CERRAR",
             options: {
@@ -343,7 +349,7 @@ function AbrirCerrarPeriodos() {
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
                     const periodo = dataPeriodo[rowIndex];
-                    const idPeriodo = periodo.idPeriod;
+                    const idPeriodo = periodo.period.idPeriod;
                     setIdPeriodo(idPeriodo);
                     return (
                         <div>
@@ -351,10 +357,10 @@ function AbrirCerrarPeriodos() {
                                 onChange={() => handleShow2(periodo, idPeriodo)}
                                 checked={
                                     estadosPeriodos.find(
-                                        (estado) => estado.idPeriodo === periodo.idPeriod
+                                        (estado) => estado.idPeriodo === periodo.period.idPeriod
                                     )?.active || false
                                 }
-                                disabled={existePeriodoActivo && !periodo.active}
+                                disabled={existePeriodoActivo && !periodo.period.active}
 
                                 //Estilos 
                                 offColor="#E20D23"
@@ -370,7 +376,7 @@ function AbrirCerrarPeriodos() {
             },
         },
         {
-            name: "CAMBIAR MODO",
+            name: "",
             options: {
                 customHeadRender: (columnMeta) => {
                     return <th className="header-datatable">{columnMeta.label}</th>;
@@ -379,21 +385,24 @@ function AbrirCerrarPeriodos() {
                     const rowIndex = tableMeta.rowIndex;
                     const periodo = dataPeriodo[rowIndex];
 
-                    const idPeriodo = periodo.idPeriod;
-                    setIdPeriodo(idPeriodo);
+                    const handleCambiarModo = () => {
+                        const idPeriodo = periodo.period.idPeriod;
+                        setIdPeriodo(idPeriodo);
+                        navigate(`/periodos/${idPeriodo}/cambiarModo`)
+                    }
+
+
                     return (
                         <div>
-                            <Button variant="success">Modo Registro</Button>
-                            <Button variant="primary" className="m-2">Modo Evidencias</Button>
-                            <Button variant="danger">Modo Doble</Button>
-
+                            <Button variant="success" onClick={handleCambiarModo} disabled={existePeriodoActivo && !periodo.period.active}>
+                                Cambiar Modo</Button>
                         </div>
                     );
                 },
             },
         },
         {
-            name: "ACCIÓN",
+            name: "",
             options: {
                 customHeadRender: (columnMeta) => {
                     return (
@@ -417,7 +426,7 @@ function AbrirCerrarPeriodos() {
 
                         if (result.isConfirmed) {
                             try {
-                                const respuesta = await fetch(`${variableEliminarPeriodo}/${periodo.idPeriod}`, {
+                                const respuesta = await fetch(`${variableEliminarPeriodo}/${periodo.period.idPeriod}`, {
                                     method: "DELETE",
                                     mode: "cors",
                                     headers: {
@@ -465,11 +474,32 @@ function AbrirCerrarPeriodos() {
         },
     ];
 
+
+    const [modoActual, setModoActual] = useState("No está asignado ningún modo");
+    useEffect(() => {
+
+        // Iteramos sobre dataPeriodo para determinar el modo actual.
+        for (const periodo of dataPeriodo) {
+            if (periodo.period.state === 1) {
+                setModoActual('Etapa Completo (Registro/Validación)');
+
+            } else if (periodo.period.state === 2) {
+                setModoActual('Etapa de registro');
+
+            } else if (periodo.period.state === 3) {
+                setModoActual('Etapa de validación');
+
+            }
+        }
+
+    }, [dataPeriodo]);
+    console.log(modoActual);
     const transformedData = dataPeriodo.map((periodo, index) => {
         return [
             index + 1, // Columna #
-            periodo.valuePeriod,
-            periodo.active !== false ? 'Abierto' : 'Cerrado', // Transforma el valor a "Abierto" o "Cerrado"
+            periodo.period.valuePeriod,
+            periodo.period.active !== false ? 'Abierto' : 'Cerrado', // Transforma el valor a "Abierto" o "Cerrado"
+            modoActual
         ];
     });
 
