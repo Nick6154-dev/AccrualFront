@@ -65,7 +65,9 @@ export async function action({ request }) {
       },
       body: JSON.stringify(datos),
     });
-    console.log(respuesta)
+    const respuestaEnviar = await respuesta.json();
+    const error = Object.values(respuestaEnviar);
+    console.log(respuestaEnviar);
     if (respuesta.ok) {
       await Swal.fire({
         title: "Actividad Registrada",
@@ -86,7 +88,7 @@ export async function action({ request }) {
     } else {
       await Swal.fire({
         title: "Error",
-        text: "Ocurrió un error al enviar el formulario",
+        text: error,
         icon: "error",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "OK",
@@ -96,7 +98,7 @@ export async function action({ request }) {
     console.error(error);
     await Swal.fire({
       title: "Error",
-      text: "Ocurrió un error al enviar el formulario",
+      text: "Ha ocurrido un error inesperado",
       icon: "error",
       confirmButtonColor: "#3085d6",
       confirmButtonText: "OK",

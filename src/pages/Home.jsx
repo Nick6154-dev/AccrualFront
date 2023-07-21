@@ -49,6 +49,7 @@ function Home() {
         });
         const periodosData = await responsePeriodos.json();
         (periodosData);
+        console.log(periodosData);
         const activoObtenido = periodosData[0].active;
         const modoObtenido = periodosData[0].state;
         localStorage.setItem("modoSistema", modoObtenido);

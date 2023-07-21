@@ -13,7 +13,7 @@ const variableNuevoPeriodo = "https://accrualback.up.railway.app/period/save";
 const variableCerrarPeriodo = "https://accrualback.up.railway.app/period/switchActivePeriod";
 const variableEliminarPeriodo = "https://accrualback.up.railway.app/period/deletePeriodById";
 const variableCambiarModo = "https://accrualback.up.railway.app/period/switchStatePeriods";
-const variableObtenerDocentes = "https://accrualback.up.railway.app/validator/findAllDocentPersonPlans";
+const variableObtenerDocentes = "https://accrualback.up.railway.app/person/findAllWithSettlementNotApproved";
 
 function AbrirCerrarPeriodos() {
 
@@ -84,7 +84,7 @@ function AbrirCerrarPeriodos() {
 
     const obtenerPeriodos = async () => {
         const data1 = await obtenerPeriodosAPI(token);
-            console.log(data1);
+       
         // Ordenar los periodos activos primero
         data1.sort((a, b) => {
             if (a.period.active && !b.period.active) {
@@ -264,7 +264,7 @@ function AbrirCerrarPeriodos() {
     const datosCambiarModo = {
         "periods": idPeriodo,
         "state": valorSelectModal,
-        "docents": selectedRows
+        "people": selectedRows
     }
 
     // Cambiar el modo del periodo
@@ -429,7 +429,7 @@ function AbrirCerrarPeriodos() {
                     }
                     return (
                         <div>
-                            <Button variant="success" onClick={handleShow3} disabled={existePeriodoActivo && !periodo.period.active}>
+                            <Button variant="success" onClick={handleShow3}>
                                 Cambiar Modo</Button>
                         </div>
                     );
@@ -593,7 +593,7 @@ function AbrirCerrarPeriodos() {
 
     }, []);
 
-
+console.log(dataDocentes);
     // Definimos las columnas
     const columnsDocentes = [
         {
@@ -604,7 +604,7 @@ function AbrirCerrarPeriodos() {
                         if (selectedRows.length === dataDocentes.length) {
                             setSelectedRows([]);
                         } else {
-                            setSelectedRows(dataDocentes.map((docente) => docente.person.idPerson));
+                            setSelectedRows(dataDocentes.map((docente) => docente.idPerson));
                         }
                     };
 
@@ -623,15 +623,15 @@ function AbrirCerrarPeriodos() {
                 customBodyRender: (value, tableMeta) => {
                     const rowIndex = tableMeta.rowIndex;
                     const docente = dataDocentes[rowIndex];
-                    const isSelected = selectedRows.includes(docente.person.idPerson);
+                    const isSelected = selectedRows.includes(docente.idPerson);
 
                     const handleSelectClick = () => {
                         const selected = [...selectedRows];
                         if (isSelected) {
-                            const index = selected.indexOf(docente.person.idPerson);
+                            const index = selected.indexOf(docente.idPerson);
                             selected.splice(index, 1);
                         } else {
-                            selected.push(docente.person.idPerson);
+                            selected.push(docente.idPerson);
                         }
                         setSelectedRows(selected);
                     };
@@ -695,7 +695,7 @@ function AbrirCerrarPeriodos() {
             docente.person.identification, // Columna Cédula
             docente.person.name, // Columna Nombres
             docente.person.lastname, // Columna Apellidos
-            docente.docent.faculty, // Columna Facultad
+            docente.faculty, // Columna Facultad
             "",
         ];
     });
@@ -787,7 +787,7 @@ function AbrirCerrarPeriodos() {
                 </Modal>
 
 
-                <Modal show={show4} onHide={handleClose4} fullscreen={"xxl-down"}>
+                <Modal show={show4} onHide={handleClose4} size={"xl"}>
                     <Modal.Header closeButton>
                         <Modal.Title>Docentes</Modal.Title>
                     </Modal.Header>
@@ -800,9 +800,6 @@ function AbrirCerrarPeriodos() {
                                 columns={columnsDocentes}
                                 options={options}
                             />
-                            <div className='p-3 text-center'>
-                                <Button variant="primary">Cambiar Modo</Button>
-                            </div>
                         </div>
                     </Modal.Body>
 
