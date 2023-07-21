@@ -305,7 +305,6 @@ function RevisarValidar() {
             });
     }
 
-    console.log(selectedRows);
     async function downloadExcelDocentesSeleccionados() {
         if (selectedRows.length === 0) {
             Swal.fire({
@@ -350,7 +349,6 @@ function RevisarValidar() {
                 });
         }
     }
-
 
 
     const options = {
@@ -417,7 +415,7 @@ function RevisarValidar() {
 
     return (
         <div>
-            <Navigation />
+           < Navigation />
             <div className="d-flex flex-column justify-content-center align-items-center py-4 ">
                 <h3>Revisar / Validar</h3>
             </div>

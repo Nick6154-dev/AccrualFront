@@ -1,6 +1,6 @@
 import MUIDataTable from 'mui-datatables';
 import { useState, useEffect } from 'react';
-import Navigation from '../components/Navigation';
+import Navigation from './Navigation';
 import Checkbox from '@mui/material/Checkbox';
 import { Button } from 'react-bootstrap';
 
@@ -13,6 +13,12 @@ function CambiarModo() {
 
     const token = sessionStorage.getItem("token");
 
+    
+    const [show4, setShow4] = useState(false);
+    const handleClose4 = () => setShow4(false);
+
+
+    // Tabla de docentes
     //Consulta a docentes que han llenado los planes
     useEffect(() => {
         const peticion = async () => {
@@ -40,7 +46,7 @@ function CambiarModo() {
 
 
     // Definimos las columnas
-    const columns = [
+    const columnsDocentes = [
         {
             name: "selection",
             options: {
@@ -134,7 +140,7 @@ function CambiarModo() {
     ];
 
     // Transformar los datos para que coincidan con las columnas del DataTable
-    const transformedData = dataDocentes.map((docente, index) => {
+    const transformedData2 = dataDocentes.map((docente, index) => {
         return [
             "",
             docente.person.identification, // Columna Cédula
@@ -144,7 +150,6 @@ function CambiarModo() {
             "",
         ];
     });
-
 
     //Checkbox de seleccionar todos
     const [selectedRows, setSelectedRows] = useState([]);
@@ -157,7 +162,6 @@ function CambiarModo() {
             setSelectedRows([]);
         }
     };
-
 
     const options = {
         responsive: "standard",
@@ -209,20 +213,31 @@ function CambiarModo() {
 
     return (
         <div>
-            < Navigation />
-            <div className="d-flex flex-column justify-content-center align-items-center py-4 ">
-                <h3>Cambiar Modo</h3>
-            </div>
+           
+           <Modal show={show4} onHide={handleClose4} fullscreen={"xxl-down"}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Docentes</Modal.Title>
+                    </Modal.Header>
 
-            <MUIDataTable
-                title={<h4>Seleccionar Docentes</h4>}
-                data={transformedData}
-                columns={columns}
-                options={options}
-            />
-            <div className='p-3 text-center'>
-                <Button variant="primary">Cambiar Modo</Button>
-            </div>
+                    <Modal.Body>
+                        <div className="form-group m-2">
+                            <MUIDataTable
+                                title={<h4>Seleccionar Docentes</h4>}
+                                data={transformedData2}
+                                columns={columnsDocentes}
+                                options={options}
+                            />
+                            <div className='p-3 text-center'>
+                                <Button variant="primary">Cambiar Modo</Button>
+                            </div>
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose4}>Cerrar</Button>
+                        <Button variant="primary" >Establer Etapa Completa</Button>
+                    </Modal.Footer>
+                </Modal>
         </div>
     )
 }

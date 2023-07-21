@@ -298,8 +298,6 @@ function VerPeriodos() {
 
     //Descargar el Excel
     async function handleExcel() {
-
-
         fetch(`${variableExcel}/${idPersona},${idPlanObtenido}`, {
             method: 'POST',
             mode: 'cors',

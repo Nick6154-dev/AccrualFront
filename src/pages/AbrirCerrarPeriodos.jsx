@@ -6,23 +6,33 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import Switch from "react-switch";
 import { useNavigate } from "react-router-dom";
+import Checkbox from '@mui/material/Checkbox';
+import { obtenerPeriodosAPI } from "../api/periodos";
 
-const variableObtenerPeriodos = "https://accrualback.up.railway.app/period/findAllWithDetails";
 const variableNuevoPeriodo = "https://accrualback.up.railway.app/period/save";
 const variableCerrarPeriodo = "https://accrualback.up.railway.app/period/switchActivePeriod";
 const variableEliminarPeriodo = "https://accrualback.up.railway.app/period/deletePeriodById";
-const variableCambiarModo = "https://accrualback.up.railway.app/period/switchStatePeriod";
+const variableCambiarModo = "https://accrualback.up.railway.app/period/switchStatePeriods";
+const variableObtenerDocentes = "https://accrualback.up.railway.app/validator/findAllDocentPersonPlans";
 
 function AbrirCerrarPeriodos() {
 
     const [dataPeriodo, setDataPeriodo] = useState([]);
     const [idPeriodo, setIdPeriodo] = useState("");
-
+    const [dataDocentes, setDataDocentes] = useState([]);
     const navigate = useNavigate();
 
     //Variables del modal
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
+
+
+    //Variables del modal
+    const [show3, setShow3] = useState(false);
+    const handleClose3 = () => setShow3(false);
+
+    const [show4, setShow4] = useState(false);
+    const handleClose4 = () => setShow4(false);
 
     const [show2, setShow2] = useState(false);
     const handleClose2 = () => setShow2(false);
@@ -32,12 +42,15 @@ function AbrirCerrarPeriodos() {
 
     const handleInputChange = (event) => {
         setNuevoPeriodo(event.target.value);
-    };
+
+    }
 
     //Validar un solo periodo
     const [existePeriodoActivo, setExistePeriodoActivo] = useState(false);
     const [estadosPeriodos, setEstadosPeriodos] = useState([]);
     const [modoPeriodo, setModoPeriodo] = useState([]);
+    const [valorSelectModal, setValorSelectModal] = useState();
+    const [selectedRows, setSelectedRows] = useState([]);
 
     //Validar que se ingrese el periodo
     const [errorFormato, setErrorFormato] = useState(false);
@@ -56,50 +69,53 @@ function AbrirCerrarPeriodos() {
         };
     }, []);
 
-    const obtenerPeriodos = async () => {
-        try {
-            const response = await fetch(`${variableObtenerPeriodos}`, {
-                method: "GET",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const data1 = await response.json();
+    function handleChangeSelect() {
+        const valorObtenidoSelect = document.getElementById("select-modo").value
+        setValorSelectModal(parseInt(valorObtenidoSelect))
+        if (valorObtenidoSelect == 1) {
+            setShow4(true);
+            handleClose3(false);
 
-            // Ordenar los periodos activos primero
-            data1.sort((a, b) => {
-                if (a.period.active && !b.period.active) {
-                    return -1; // a está activo, b está inactivo
-                } else if (!a.period.active && b.period.active) {
-                    return 1; // a está inactivo, b está activo
-                } else {
-                    return 0; // ambos están activos o inactivos, no se cambia el orden
-                }
-            });
-
-            setDataPeriodo(data1);
-
-            // Actualiza los estados de los periodos individuales
-            const estados = data1.map((periodo) => ({
-                idPeriodo: periodo.period.idPeriod,
-                active: periodo.period.active,
-            }));
-            setEstadosPeriodos(estados);
-
-
-            const existeActivo = data1.some((periodo) => periodo.period.active === true);
-            setExistePeriodoActivo(existeActivo);
-
-            const periodosActivos = data1
-                .filter((period) => period.active)
-                .map((period) => period.valuePeriod)
-                .join(", ");
-            localStorage.setItem("periodosAbiertos", periodosActivos);
-        } catch (error) {
-            console.log(error);
+        } else if (valorObtenidoSelect == 2 || valorObtenidoSelect == 3) {
+            setSelectedRows([])
         }
+    }
+
+
+    const obtenerPeriodos = async () => {
+        const response = await obtenerPeriodosAPI(token);
+
+        console.log(response)
+        // Ordenar los periodos activos primero
+        data1.sort((a, b) => {
+            if (a.period.active && !b.period.active) {
+                return -1; // a está activo, b está inactivo
+            } else if (!a.period.active && b.period.active) {
+                return 1; // a está inactivo, b está activo
+            } else {
+                return 0; // ambos están activos o inactivos, no se cambia el orden
+            }
+        });
+
+        setDataPeriodo(data1);
+
+        // Actualiza los estados de los periodos individuales
+        const estados = data1.map((periodo) => ({
+            idPeriodo: periodo.period.idPeriod,
+            active: periodo.period.active,
+        }));
+        setEstadosPeriodos(estados);
+
+
+        const existeActivo = data1.some((periodo) => periodo.period.active === true);
+        setExistePeriodoActivo(existeActivo);
+
+        const periodosActivos = data1
+            .filter((period) => period.period.active)
+            .map((period) => period.period.valuePeriod)
+            .join(", ");
+        localStorage.setItem("periodosAbiertos", periodosActivos);
+
     };
 
     //Consulta de los periodos
@@ -109,6 +125,10 @@ function AbrirCerrarPeriodos() {
 
     const handleShow = () => {
         setShow(true);
+    };
+
+    const handleShow3 = () => {
+        setShow3(true);
     };
     const datosNuevoPeriodo = {
         idPeriod: null,
@@ -132,7 +152,6 @@ function AbrirCerrarPeriodos() {
             });
             return;
         }
-
         if (!formatoValido) {
             await Swal.fire({
                 title: "Error",
@@ -145,7 +164,6 @@ function AbrirCerrarPeriodos() {
         }
         // Verificar si el nuevo período es igual a datosPeriodo.valuePeriod
         const esIgual = dataPeriodo.some(periodo => periodo.valuePeriod === nuevoPeriodo);
-
         if (esIgual) {
             await Swal.fire({
                 title: "Error",
@@ -156,7 +174,6 @@ function AbrirCerrarPeriodos() {
             });
             return;
         }
-
         try {
             const respuesta = await fetch(`${variableNuevoPeriodo}`, {
                 method: "POST",
@@ -215,9 +232,9 @@ function AbrirCerrarPeriodos() {
                 obtenerPeriodos();
                 // Reordenar los periodos activos primero
                 dataPeriodo.sort((a, b) => {
-                    if (a.active && !b.active) {
+                    if (a.period.active && !b.period.active) {
                         return -1; // a está activo, b está inactivo
-                    } else if (!a.active && b.active) {
+                    } else if (!a.period.active && b.period.active) {
                         return 1; // a está inactivo, b está activo
                     } else {
                         return 0; // ambos están activos o inactivos, no se cambia el orden
@@ -245,25 +262,47 @@ function AbrirCerrarPeriodos() {
         return null;
     }
 
+    const datosCambiarModo = {
+        "periods": idPeriodo,
+        "state": valorSelectModal,
+        "docents": selectedRows
+    }
+
     // Cambiar el modo del periodo
-    async function handleModo(idPeriodo) {
+    async function handleModo() {
 
         try {
-            const respuesta = await fetch(`${variableCambiarModo}/${idPeriodo}`, {
+            const respuesta = await fetch(`${variableCambiarModo}`, {
                 method: "PATCH",
                 mode: "cors",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
+                body: JSON.stringify(datosCambiarModo)
             });
+            const respuestaModo = await respuesta.json();
+            let error = Object.values(respuestaModo)
 
             if (respuesta.ok) {
+
                 obtenerPeriodos();
+                handleClose3(false);
+                handleClose4(false);
+                setValorSelectModal();
+                setSelectedRows([]);
+                await Swal.fire({
+                    title: "Actualizado",
+                    text: "La etapa del sistema se ha cambiado exitosamente",
+                    icon: "success",
+
+                    confirmButtonColor: "#3085d6",
+
+                });
             } else {
                 await Swal.fire({
                     title: "Error",
-                    text: "No se ha podido Cambiar de modo al periodo",
+                    text: error,
                     icon: "error",
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: "OK",
@@ -273,7 +312,7 @@ function AbrirCerrarPeriodos() {
             console.error(error);
             await Swal.fire({
                 title: "Error",
-                text: "Ocurrió un error al cambiar el modo del periodo",
+                text: error,
                 icon: "error",
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "OK",
@@ -281,7 +320,6 @@ function AbrirCerrarPeriodos() {
         }
         return null;
     }
-
 
     const handleShow2 = (periodo) => {
         const estadoPeriodo = periodo.period.active;
@@ -388,13 +426,11 @@ function AbrirCerrarPeriodos() {
                     const handleCambiarModo = () => {
                         const idPeriodo = periodo.period.idPeriod;
                         setIdPeriodo(idPeriodo);
-                        navigate(`/periodos/${idPeriodo}/cambiarModo`)
+
                     }
-
-
                     return (
                         <div>
-                            <Button variant="success" onClick={handleCambiarModo} disabled={existePeriodoActivo && !periodo.period.active}>
+                            <Button variant="success" onClick={handleShow3} disabled={existePeriodoActivo && !periodo.period.active}>
                                 Cambiar Modo</Button>
                         </div>
                     );
@@ -474,34 +510,22 @@ function AbrirCerrarPeriodos() {
         },
     ];
 
-
-    const [modoActual, setModoActual] = useState("No está asignado ningún modo");
-    useEffect(() => {
-
-        // Iteramos sobre dataPeriodo para determinar el modo actual.
-        for (const periodo of dataPeriodo) {
-            if (periodo.period.state === 1) {
-                setModoActual('Etapa Completo (Registro/Validación)');
-
-            } else if (periodo.period.state === 2) {
-                setModoActual('Etapa de registro');
-
-            } else if (periodo.period.state === 3) {
-                setModoActual('Etapa de validación');
-
-            }
-        }
-
-    }, [dataPeriodo]);
-    console.log(modoActual);
     const transformedData = dataPeriodo.map((periodo, index) => {
+        const estadoEtapa = {
+            0: 'No Existe una etapa registrada',
+            1: 'Etapa completa (Registro/Validación)',
+            2: 'Etapa de Registro',
+            3: 'Etapa de validación'
+        };
+
         return [
             index + 1, // Columna #
             periodo.period.valuePeriod,
             periodo.period.active !== false ? 'Abierto' : 'Cerrado', // Transforma el valor a "Abierto" o "Cerrado"
-            modoActual
+            estadoEtapa[periodo.period.state]
         ];
     });
+
 
     const options = {
         responsive: "standard",
@@ -543,6 +567,151 @@ function AbrirCerrarPeriodos() {
         color: '#0076bd', // Cambia el color del título a azul
         fontSize: '1.4em', // Cambia el tamaño de fuente del título
     };
+
+    // Tabla de docentes
+    //Consulta a docentes que han llenado los planes
+    useEffect(() => {
+        const peticion = async () => {
+            try {
+                const response = await fetch(`${variableObtenerDocentes}`, {
+                    method: "GET",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+
+                    },
+                });
+                const data1 = await response.json();
+                setDataDocentes(data1);
+
+
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        peticion();
+
+    }, []);
+
+
+    // Definimos las columnas
+    const columnsDocentes = [
+        {
+            name: "selection",
+            options: {
+                customHeadRender: () => {
+                    const handleSelectAllClick = () => {
+                        if (selectedRows.length === dataDocentes.length) {
+                            setSelectedRows([]);
+                        } else {
+                            setSelectedRows(dataDocentes.map((docente) => docente.person.idPerson));
+                        }
+                    };
+
+                    const isChecked = selectedRows.length === dataDocentes.length;
+
+                    return (
+                        <th className="header-datatable">
+                            <Checkbox
+                                checked={isChecked}
+                                onChange={handleSelectAllClick}
+                                color="primary"
+                            />
+                        </th>
+                    );
+                },
+                customBodyRender: (value, tableMeta) => {
+                    const rowIndex = tableMeta.rowIndex;
+                    const docente = dataDocentes[rowIndex];
+                    const isSelected = selectedRows.includes(docente.person.idPerson);
+
+                    const handleSelectClick = () => {
+                        const selected = [...selectedRows];
+                        if (isSelected) {
+                            const index = selected.indexOf(docente.person.idPerson);
+                            selected.splice(index, 1);
+                        } else {
+                            selected.push(docente.person.idPerson);
+                        }
+                        setSelectedRows(selected);
+                    };
+
+                    return (
+                        <Checkbox
+                            checked={isSelected}
+                            onChange={handleSelectClick}
+                            color="primary"
+                        />
+                    );
+                },
+            },
+        },
+        {
+            name: "Cédula",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Nombres",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Apellidos",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        },
+        {
+            name: "Facultad",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+            },
+        }
+    ];
+
+    // Transformar los datos para que coincidan con las columnas del DataTable
+    const transformedData2 = dataDocentes.map((docente, index) => {
+        return [
+            "",
+            docente.person.identification, // Columna Cédula
+            docente.person.name, // Columna Nombres
+            docente.person.lastname, // Columna Apellidos
+            docente.docent.faculty, // Columna Facultad
+            "",
+        ];
+    });
+
+
+    //Checkbox de seleccionar todos
+    const handleSelectAll = (event) => {
+        if (event.target.checked) {
+            const allRows = Array.from({ length: dataDocentes.length }, (_, index) => index);
+            setSelectedRows(allRows);
+        } else {
+            setSelectedRows([]);
+        }
+    };
+
 
     return (
         <div>
@@ -586,6 +755,61 @@ function AbrirCerrarPeriodos() {
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>Cerrar</Button>
                         <Button variant="primary" onClick={handleNuevoPeriodo}>Agregar Periodo</Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={show3} onHide={handleClose3}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Cambiar Modo</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <div className="form-group m-2">
+                            <label htmlFor="nuevoPeriodo">Seleccione una etapa para el sistema</label>
+                            <div className="p-2">
+                                <select
+                                    id="select-modo"
+                                    value={valorSelectModal}
+                                    onChange={handleChangeSelect}
+                                    className="form-control">
+                                    <option> ** Seleccione ** </option>
+                                    <option value={2}> Etapa Registro</option>
+                                    <option value={3}> Etapa Validación</option>
+                                    <option value={1}> Etapa Completa (Registro/Validación)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose3}>Cerrar</Button>
+                        <Button variant="primary" onClick={handleModo}>Cambiar modo</Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+                <Modal show={show4} onHide={handleClose4} fullscreen={"xxl-down"}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Docentes</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <div className="form-group m-2">
+                            <MUIDataTable
+                                title={<h4>Seleccionar Docentes</h4>}
+                                data={transformedData2}
+                                columns={columnsDocentes}
+                                options={options}
+                            />
+                            <div className='p-3 text-center'>
+                                <Button variant="primary">Cambiar Modo</Button>
+                            </div>
+                        </div>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose4}>Cerrar</Button>
+                        <Button variant="primary" onClick={handleModo}>Establer Etapa Completa</Button>
                     </Modal.Footer>
                 </Modal>
 

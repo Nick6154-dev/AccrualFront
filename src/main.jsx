@@ -11,7 +11,7 @@ import RevisarValidar from './pages/RevisarValidar'
 import AbrirCerrarPeriodos from './pages/AbrirCerrarPeriodos'
 import MostrarDatosDocente from '../src/components/MostrarDatosDocente'
 
-import CambiarModo from './pages/CambiarModo'
+import CambiarModo from './components/CambiarModo'
 import NuevaActividadDevengamiento, { action as actionActividadDevengamiento } from '../src/pages/NuevaActividadDevengamiento'
 import EditarActividades, {
     loader as loaderEditar
