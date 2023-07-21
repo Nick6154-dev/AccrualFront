@@ -83,9 +83,8 @@ function AbrirCerrarPeriodos() {
 
 
     const obtenerPeriodos = async () => {
-        const response = await obtenerPeriodosAPI(token);
-
-        console.log(response)
+        const data1 = await obtenerPeriodosAPI(token);
+            console.log(data1);
         // Ordenar los periodos activos primero
         data1.sort((a, b) => {
             if (a.period.active && !b.period.active) {
