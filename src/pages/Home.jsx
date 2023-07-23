@@ -5,17 +5,16 @@ import { useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 
 
-const variableObtenerPeriodo = "https://accrualback.up.railway.app/period/findAllActivePeriods";
-const obteneridPlan = "https://accrualback.up.railway.app/plan/byIdPersonPeriod";
-
+const variableObtenerPeriodo = "https://accrualback.up.railway.app/period/findAllByIdPerson";
 function Home() {
 
   //variables  a useState
-  const [periodosAbiertos, setPeriodosAbiertos] = useState("");
-  const [idPeriodo, setIdPeriodo] = useState("");
-  const [idPlan, setIdPlan] = useState("");
+  const [idPeriodo, setIdPeriodo] = useState([]);
   const [modo, setModo] = useState("");
   const [activo, setActivo] = useState("");
+  const [periodos, setPeriodos] = useState([])
+  const [numeroPeriodos, setNumeroPeriodos] = useState();
+  const [modoPeriodo, setModoPeriodo] = useState();
 
   //Obtenemos el Token con estado
   const token = sessionStorage.getItem("token");
@@ -39,7 +38,7 @@ function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responsePeriodos = await fetch(`${variableObtenerPeriodo}`, {
+        const responsePeriodos = await fetch(`${variableObtenerPeriodo}/${idPersona}`, {
           method: "GET",
           mode: "cors",
           headers: {
@@ -48,49 +47,70 @@ function Home() {
           },
         });
         const periodosData = await responsePeriodos.json();
-        (periodosData);
-        console.log(periodosData);
-        const activoObtenido = periodosData[0].active;
-        const modoObtenido = periodosData[0].state;
-        localStorage.setItem("modoSistema", modoObtenido);
-        if (activoObtenido === true) {
-          setActivo("Plan activado para registrar actividades")
-        }
-        if (modoObtenido === true) {
-          setModo("Etapa de registro");
-        } if (modoObtenido === false) {
-          setModo("Etapa de ingresar evidencias");
-        }
-        setPeriodosAbiertos(periodosData[0].valuePeriod);
-        setIdPeriodo(periodosData[0].idPeriod);
+        
+        const periodoValorModo = periodosData.map((periodos) => periodos.state);
+        setModoPeriodo(periodoValorModo);
+        
+        localStorage.setItem("modoPeriodo",periodoValorModo);
+    
 
-        const responseIdPlan = await fetch(`${obteneridPlan}/${idPersona},${periodosData[0].idPeriod}`, {
-          method: "GET",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (responseIdPlan.ok) {
-          const idPlanData = await responseIdPlan.json();
-          setIdPlan(idPlanData.idPlan);
 
+        localStorage.setItem("periodosCompletos", JSON.stringify(periodosData));
+        const periodoValores = [periodosData.map((periodos) => periodos.valuePeriod)];
+
+        setPeriodos(periodoValores[0]);
+        setNumeroPeriodos(Object.values(periodoValores[0]).length)
+
+        const periodoValorID = [periodosData.map((periodos) => periodos.idPeriod)];
+        setIdPeriodo(periodoValorID);
+
+        const existeCerrado = periodosData.some((periodos) => periodos.active === true);
+        if (existeCerrado) {
+          setActivo(true);
         } else {
-          throw new Error('Error en la consulta Fetch');
+          setActivo(false);
         }
+
+        if ((Object.values(periodosData)).length == 1) {
+
+         const periodoValorModo = periodosData.map((periodos) => periodos.state);
+          const valorModo= periodoValorModo[0];
+          console.log(valorModo);
+        localStorage.setItem("modoPeriodo", valorModo);
+       
+  
+          const activoObtenido = periodosData[0].active;
+          const modoObtenido = periodosData[0].state;
+          const valorPeriodos = periodosData[0].valuePeriod;
+          setPeriodos(valorPeriodos);
+          if (activoObtenido) {
+            setActivo(true)
+          } else {
+            setActivo(false)
+          }
+
+          if (modoObtenido === 0) {
+            setModo("No Existe una etapa registrada")
+          } else if (modoObtenido === 1) {
+            setModo("Etapa completa (Registro/Validación)")
+          }
+          else if (modoObtenido === 2) {
+            setModo("Etapa de Registro")
+          }
+          else if (modoObtenido === 3) {
+            setModo("Etapa de validación")
+          }
+          setIdPeriodo(periodosData[0].idPeriod);
+        }
+
       } catch (error) {
         console.error(error);
       }
     };
-
     fetchData();
   }, []);
-
-  localStorage.setItem("periodosAbiertos", periodosAbiertos);
+  localStorage.setItem("periodosAbiertos", periodos);
   localStorage.setItem("idPeriodo", idPeriodo);
-  sessionStorage.setItem("idPlan", idPlan);
-
   return (
     <div>
       <header className="header">
@@ -112,29 +132,23 @@ function Home() {
           Bienvenido al Sistema de Seguimiento a Devengamientos de los Docentes
         </h4>
       </div>
-      <div className="d-flex flex-row justify-content-center align-items-center ">
-        {periodosAbiertos === "" ? (
-
-          <Alert variant="danger" className="p-2 m-4 text-center">
-            <h5>No existen periodos activos</h5>
-            <p>Plan inhabilitado para agregar nuevas actividades</p>
+      <div className="d-flex flex-row justify-content-center align-items-center">
+        {activo === false ? (
+          <Alert variant="danger" className="p-2 text-center">
+            <h4>Ningún periodo activado</h4>
           </Alert>
-
-        ) : (
-
-
+        ) : numeroPeriodos === 1 ? (
+          <Alert variant="primary" className="p-2 m-4 text-center">
+            <h3>Periodo Activo</h3>
+            <h4>{periodos}</h4>
+            <br />
+            <p>{modo}</p>
+          </Alert>
+        ) : numeroPeriodos > 1 ? (
           <Alert variant="primary" className="p-2 text-center">
-            Periodo Activo: <h3>{periodosAbiertos}</h3>
-
-            <p>{activo}</p>
+            <h3>Periodos activados para ingreso de datos</h3>
           </Alert>
-
-        )}
-        <div class="d-flex flex-row-reverse bd-highlight">
-          <Alert variant="primary" className="p-2 m-5 bd-highlighttext-center">
-            <h5>{modo}</h5>
-          </Alert>
-        </div>
+        ) : null}
       </div>
       <div className="row justify-content-md-center align-items-center m-4 p-3 border border-secondar">
         <div className="col-md-auto m-4 image">

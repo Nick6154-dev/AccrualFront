@@ -20,6 +20,8 @@ function AbrirCerrarPeriodos() {
     const [dataPeriodo, setDataPeriodo] = useState([]);
     const [idPeriodo, setIdPeriodo] = useState("");
     const [dataDocentes, setDataDocentes] = useState([]);
+    
+    const [idPeriodoModo, setIdPeriodoModo] = useState();
     const navigate = useNavigate();
 
     //Variables del modal
@@ -84,7 +86,7 @@ function AbrirCerrarPeriodos() {
 
     const obtenerPeriodos = async () => {
         const data1 = await obtenerPeriodosAPI(token);
-       
+
         // Ordenar los periodos activos primero
         data1.sort((a, b) => {
             if (a.period.active && !b.period.active) {
@@ -104,7 +106,6 @@ function AbrirCerrarPeriodos() {
             active: periodo.period.active,
         }));
         setEstadosPeriodos(estados);
-
 
         const existeActivo = data1.some((periodo) => periodo.period.active === true);
         setExistePeriodoActivo(existeActivo);
@@ -229,6 +230,8 @@ function AbrirCerrarPeriodos() {
 
             if (respuesta.ok) {
                 obtenerPeriodos();
+
+
                 // Reordenar los periodos activos primero
                 dataPeriodo.sort((a, b) => {
                     if (a.period.active && !b.period.active) {
@@ -239,6 +242,7 @@ function AbrirCerrarPeriodos() {
                         return 0; // ambos están activos o inactivos, no se cambia el orden
                     }
                 });
+
             } else {
                 await Swal.fire({
                     title: "Error",
@@ -262,11 +266,12 @@ function AbrirCerrarPeriodos() {
     }
 
     const datosCambiarModo = {
-        "periods": idPeriodo,
+        "periods": idPeriodoModo,
         "state": valorSelectModal,
         "people": selectedRows
     }
 
+console.log(datosCambiarModo);
     // Cambiar el modo del periodo
     async function handleModo() {
 
@@ -397,7 +402,6 @@ function AbrirCerrarPeriodos() {
                                         (estado) => estado.idPeriodo === periodo.period.idPeriod
                                     )?.active || false
                                 }
-                                disabled={existePeriodoActivo && !periodo.period.active}
 
                                 //Estilos 
                                 offColor="#E20D23"
@@ -424,12 +428,14 @@ function AbrirCerrarPeriodos() {
 
                     const handleCambiarModo = () => {
                         const idPeriodo = periodo.period.idPeriod;
-                        setIdPeriodo(idPeriodo);
 
+                        setIdPeriodoModo(idPeriodo);
+                        
+                        handleShow3();
                     }
                     return (
                         <div>
-                            <Button variant="success" onClick={handleShow3}>
+                            <Button variant="success" onClick={handleCambiarModo}>
                                 Cambiar Modo</Button>
                         </div>
                     );
@@ -508,7 +514,7 @@ function AbrirCerrarPeriodos() {
             },
         },
     ];
-
+    console.log(idPeriodoModo);
     const transformedData = dataPeriodo.map((periodo, index) => {
         const estadoEtapa = {
             0: 'No Existe una etapa registrada',
@@ -592,8 +598,6 @@ function AbrirCerrarPeriodos() {
         peticion();
 
     }, []);
-
-console.log(dataDocentes);
     // Definimos las columnas
     const columnsDocentes = [
         {
@@ -623,15 +627,15 @@ console.log(dataDocentes);
                 customBodyRender: (value, tableMeta) => {
                     const rowIndex = tableMeta.rowIndex;
                     const docente = dataDocentes[rowIndex];
-                    const isSelected = selectedRows.includes(docente.idPerson);
+                    const isSelected = selectedRows.includes(docente.person.idPerson);
 
                     const handleSelectClick = () => {
                         const selected = [...selectedRows];
                         if (isSelected) {
-                            const index = selected.indexOf(docente.idPerson);
+                            const index = selected.indexOf(docente.person.idPerson);
                             selected.splice(index, 1);
                         } else {
-                            selected.push(docente.idPerson);
+                            selected.push(docente.person.idPerson);
                         }
                         setSelectedRows(selected);
                     };
@@ -710,7 +714,6 @@ console.log(dataDocentes);
             setSelectedRows([]);
         }
     };
-
 
     return (
         <div>
