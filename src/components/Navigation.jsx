@@ -8,7 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
-const variableFiniquito = "https://accrualback.up.railway.app/accrualData/settlement";
+const variableFiniquito = "https://accrualback.up.railway.app/accrualData/requestSettlement";
 const idPersona = sessionStorage.getItem("idPersona")
 
 function Navigation() {

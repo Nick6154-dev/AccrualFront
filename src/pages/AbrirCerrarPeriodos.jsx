@@ -271,7 +271,6 @@ function AbrirCerrarPeriodos() {
         "people": selectedRows
     }
 
-console.log(datosCambiarModo);
     // Cambiar el modo del periodo
     async function handleModo() {
 
@@ -514,7 +513,6 @@ console.log(datosCambiarModo);
             },
         },
     ];
-    console.log(idPeriodoModo);
     const transformedData = dataPeriodo.map((periodo, index) => {
         const estadoEtapa = {
             0: 'No Existe una etapa registrada',
@@ -608,7 +606,7 @@ console.log(datosCambiarModo);
                         if (selectedRows.length === dataDocentes.length) {
                             setSelectedRows([]);
                         } else {
-                            setSelectedRows(dataDocentes.map((docente) => docente.idPerson));
+                            setSelectedRows(dataDocentes.map((docente) => docente.person.idPerson));
                         }
                     };
 
@@ -691,7 +689,6 @@ console.log(datosCambiarModo);
             },
         }
     ];
-
     // Transformar los datos para que coincidan con las columnas del DataTable
     const transformedData2 = dataDocentes.map((docente, index) => {
         return [
@@ -703,7 +700,6 @@ console.log(datosCambiarModo);
             "",
         ];
     });
-
 
     //Checkbox de seleccionar todos
     const handleSelectAll = (event) => {

@@ -16,7 +16,6 @@ export async function action({ request }) {
   const idPersona = sessionStorage.getItem("idPersona");
   const idUniversidad = 1;
   let period = localStorage.getItem("idPeriodo");
-
   const idPeriodos = period.split(',').map(item => Number(item.trim()));
   if (idPeriodos.length > 1) {
     period = localStorage.getItem("idPeriodoSeleccionado");
@@ -60,8 +59,6 @@ export async function action({ request }) {
     } 
   }
   
-
-
   console.log(datos);
   //Validacion
   const errores = [];
