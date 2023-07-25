@@ -62,8 +62,6 @@ function NuevoDocente() {
         }
     }
 
-    console.log(datosSubmit);
-
     //Obtenemos el Token con estado
     const [token, setToken] = useState(sessionStorage.getItem("token"));
     useEffect(() => {
@@ -115,8 +113,10 @@ function NuevoDocente() {
                 },
                 body: JSON.stringify(datosSubmit),
             });
-            const error = Object.values(respuesta);
-            if (respuesta.ok) {
+            const data1 = await respuesta.json();
+            const error = Object.values(data1);
+            console.log(typeof error[0]);
+            if (error[0] === "Nuevo docente registrado con exito") {
                 await Swal.fire({
                     title: "Enviado",
                     text: "Los datos se han registrado exitosamente ",
@@ -129,7 +129,7 @@ function NuevoDocente() {
             } else {
                 await Swal.fire({
                     title: "Error",
-                    text: "Ocurrió un error al enviar el formulario",
+                    text: error,
                     icon: "error",
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: "OK",

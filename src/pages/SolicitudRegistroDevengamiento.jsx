@@ -108,13 +108,13 @@ function SolicitudRegistroDevengamiento() {
         network: {
             idNetworks: null,
             orcidCode: valorOrci,
-            ceida: valorRedi,
+            cedia: valorRedi,
             rniSenesyt: valorInvestigadores,
             docent: null,
             socialNetworks: null
         }
     }
-
+console.log(datosSubmit);
     //Consulta a facultades sin token
     useEffect(() => {
         const peticion = async () => {
@@ -152,7 +152,9 @@ function SolicitudRegistroDevengamiento() {
                 body: JSON.stringify(datosSubmit),
             });
 
-            if (respuesta.ok) {
+            const data1 = await respuesta.json();
+            const error = Object.values(data1);
+            if (error[0] === "Nuevo docente registrado con exito") {
                 await Swal.fire({
                     title: "Enviado",
                     text: "Los datos se han registrado exitosamente ",
@@ -161,11 +163,11 @@ function SolicitudRegistroDevengamiento() {
                     confirmButtonColor: "#3085d6",
 
                 });
-                window.location.href = "/";
+                window.location.href = "/#/";
             } else {
                 await Swal.fire({
                     title: "Error",
-                    text: "Ocurrió un error al enviar el formulario",
+                    text: error,
                     icon: "error",
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: "OK",
