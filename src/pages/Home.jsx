@@ -47,7 +47,7 @@ function Home() {
           },
         });
         const periodosData = await responsePeriodos.json();
-        
+       
         const periodoValorModo = periodosData.map((periodos) => periodos.state);
         setModoPeriodo(periodoValorModo);
         
@@ -76,8 +76,7 @@ function Home() {
          const periodoValorModo = periodosData.map((periodos) => periodos.state);
           const valorModo= periodoValorModo[0];
         localStorage.setItem("modoPeriodo", valorModo);
-       
-  
+        
           const activoObtenido = periodosData[0].active;
           const modoObtenido = periodosData[0].state;
           const valorPeriodos = periodosData[0].valuePeriod;

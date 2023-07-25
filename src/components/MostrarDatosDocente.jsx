@@ -6,7 +6,11 @@ import Modal from "react-bootstrap/Modal";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import MUIDataTable from 'mui-datatables';
-
+import { actualizarDatosGeneralesAPI } from "../api/mostrarDatosDocente";
+import { agregarDatosDevengamientoAPI } from "../api/mostrarDatosDocente";
+import { actualizarDatosDevengamientoAPI } from "../api/mostrarDatosDocente";
+import { agregarDatosRedesAPI } from "../api/mostrarDatosDocente";
+import { actualizarDatosRedesAPI } from "../api/mostrarDatosDocente";
 function MostrarDatosDocente() {
 
   //Obtenemos el Token con estado
@@ -43,7 +47,6 @@ function MostrarDatosDocente() {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
-
 
   //Obtener datos generales
   const useLoaderData = () => {
@@ -100,6 +103,17 @@ function MostrarDatosDocente() {
     }, []);
     return data2;
   };
+
+  // Verificar si modality y category son cadenas vacías usando .map()
+  const modalidadCategoria = dataGenerales2.map((item) => {
+    return item.modality === "" && item.category === "";
+  });
+
+  // Comprobar si todas las entradas son true usando .every()
+  const existeVaciosDatosGenerales = modalidadCategoria.every(
+    (item) => item === true
+  );
+
 
   const [data3, setData3] = useState([]);
   //Obtener datos de Devengamiento del Docente
@@ -166,8 +180,8 @@ function MostrarDatosDocente() {
   };
 
 
-  //Obtener datos de redes de los Docentes
 
+  //Obtener datos de redes de los Docentes
   const [data4, setData4] = useState([]);
   const useLoaderData4 = () => {
     const loader4 = async () => {
@@ -190,9 +204,11 @@ function MostrarDatosDocente() {
         setRediCedia(dataRedes.cedia);
         setSenescyt(dataRedes.rniSenesyt);
         setOrcid(dataRedes.orcidCode);
-
-
-        setData4([{ ...dataRedes }]);
+        if (idNetwork == null) {
+          setData4([])
+        } else {
+          setData4([{ ...dataRedes }]);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -203,39 +219,6 @@ function MostrarDatosDocente() {
 
     return data4;
   };
-
-  //Actualizar datos
-  async function handleSubmit() {
-    try {
-      const respuestaActualizar = await fetch(
-        `${variableActualizarDevengamiento}/${idAccrualData}`,
-        {
-          method: "PUT",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            thesisLink: enlaceTesis,
-            readingThesisDate: fechaLectura,
-            refundDate: fechaReintegro,
-            contractAddendumLink: enlaceAdendaContrato,
-            settlement: "false",
-            observations: "null",
-            accrualTime: tiempoDevengamiento,
-            docent: docente,
-          }),
-        }
-      );
-      await respuestaActualizar.json();
-      if (respuestaActualizar.ok) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   //Enviar Observaciones
   async function handleSubmitObservaciones() {
@@ -286,37 +269,6 @@ function MostrarDatosDocente() {
     }
   }
 
-  //Actualizar datos de redes
-  async function handleSubmitRedes() {
-    try {
-      const respuestaActualizar = await fetch(
-        `${variableActualizarRedes}/${idNetwork}`,
-        {
-          method: "PUT",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            cedia: rediCedia,
-            docent: docente,
-            orcidCode: orcid,
-            rniSenesyt: senescyt,
-            socialNetworks: [],
-          }),
-        }
-      );
-      await respuestaActualizar.json();
-      if (respuestaActualizar.ok) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-
   const datos = useLoaderData();
   const datosDocente = useLoaderData2();
   const datosDevengamiento = useLoaderData3();
@@ -330,9 +282,24 @@ function MostrarDatosDocente() {
   const handleCloseEditDev = () => setShowEditDev(false);
   const handleShowEditDev = () => setShowEditDev(true);
 
+  const [ShowDatosG, setShowDatosG] = useState(false);
+  const handleCloseDatosG = () => setShowDatosG(false);
+  const handleShowDatosG = () => setShowDatosG(true);
+
   const [showEditRed, setShowEditRed] = useState(false);
   const handleCloseEditRed = () => setShowEditRed(false);
   const handleShowEditRed = () => setShowEditRed(true);
+
+  //Obtener Datos Generales
+  const [valorModalidad, setValorModalidad] = useState("");
+  const [valorCategoria, setValorCategoria] = useState("");
+
+  function handleChange6(event) {
+    setValorModalidad(event.target.value);
+  }
+  function handleChange7(event) {
+    setValorCategoria(event.target.value);
+  }
 
   // Obtener datos del editar Datos Devengamiento
   const [enlaceTesis, setEnlaceTesis] = useState("");
@@ -378,6 +345,152 @@ function MostrarDatosDocente() {
 
   function handleChangeObservaciones(event) {
     setObservaciones(event.target.value);
+  }
+
+
+  //Datos para agregar
+  const datosGeneralesActualizar = {
+    "categoryDocent": valorCategoria,
+    "modalityAccrual": valorModalidad
+  }
+
+  const datosNuevosDevengamiento = {
+    "thesisLink": enlaceTesis,
+    "readingThesisDate": fechaLectura,
+    "refundDate": fechaReintegro,
+    "contractAddendumLink": enlaceAdendaContrato,
+    "accrualTime": tiempoDevengamiento
+  }
+
+  const datosNuevosRedes = {
+    "orcidCode": orcid,
+    "cedia": rediCedia,
+    "rniSenesyt": senescyt
+  }
+
+  //Consultas para actualizar
+  async function actualizarDatosGenerales() {
+    const respuesta = await actualizarDatosGeneralesAPI(idPersona, token, datosGeneralesActualizar);
+    if (respuesta.ok) {
+
+      await Swal.fire({
+        title: "Agregado",
+        text: "Los datos se han agredado",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
+      window.location.reload();
+    } else {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+    }
+  }
+
+  //Agregar datos devengamiento
+  async function agregarDatosDevengamiento() {
+    const respuesta = await agregarDatosDevengamientoAPI(idPersona, token, datosNuevosDevengamiento);
+
+    const error = Object.values(respuesta);
+    if (respuesta.ok) {
+      setShowEditDev(false);
+
+      await Swal.fire({
+        title: "Agregado",
+        text: "Los datos se han agregado",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
+      window.location.reload();
+    } else {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+    }
+  }
+
+  //Actualizar datos devengamiento
+  async function handleSubmit() {
+    const respuesta = await actualizarDatosDevengamientoAPI(idAccrualData, token, datosNuevosDevengamiento);
+
+    const error = Object.values(respuesta);
+    if (respuesta.ok) {
+      setShowEditDev(false);
+
+      await Swal.fire({
+        title: "Agregado",
+        text: "Los datos se han actualizado",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
+      window.location.reload();
+    } else {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+    }
+  }
+
+  //Agregar datos redes
+  async function agregarDatosRedes() {
+    const respuesta = await agregarDatosRedesAPI(idPersona, token, datosNuevosRedes);
+
+    const error = Object.values(respuesta);
+    if (respuesta.ok) {
+      setShowEditRed(false);
+      await Swal.fire({
+        title: "Agregado",
+        text: "Los datos se han agregado",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
+      window.location.reload();
+    } else {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+    }
+  }
+
+  // Actualizar datos redes
+  async function handleSubmitRedes() {
+    const respuesta = await actualizarDatosRedesAPI(idAccrualData, token, datosNuevosRedes);
+
+    const error = Object.values(respuesta);
+    if (respuesta.ok) {
+      setShowEditRed(false)
+      await Swal.fire({
+        title: "Agregado",
+        text: "Los datos se han actualizado",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
+      window.location.reload();
+    } else {
+      await Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+    }
   }
 
   // Definimos las columnas para Datos Generales
@@ -454,6 +567,28 @@ function MostrarDatosDocente() {
     },
 
   ];
+  if (existeVaciosDatosGenerales) {
+    columnasDatosGenerales.push({
+      name: " ",
+      options: {
+        customHeadRender: (columnMeta) => {
+          return (
+            <th className="header-datatable">{columnMeta.label}</th>
+          );
+        },
+        customBodyRender: () => {
+          return (
+            <div>
+              <Button variant="primary" className="mx-1 btn-block my-2" onClick={handleShowDatosG} >
+                Agregar datos
+              </Button>
+            </div>
+          );
+        },
+      },
+    });
+  }
+
 
   // Definimos las columnas para Datos Devengamiento
   const columnasDatosDevengamiento = [
@@ -518,9 +653,17 @@ function MostrarDatosDocente() {
         },
         customBodyRender: () => {
           return (
-            <Button variant="primary" onClick={handleShowEditDev}>
-              Editar
-            </Button>
+            <div>
+              {data3.length > 0 ? (
+                <Button variant="primary" onClick={handleShowEditDev}>
+                  Editar
+                </Button>
+              ) : (
+                <Button variant="primary" onClick={handleShowEditDev} >
+                  Agregar Datos
+                </Button>
+              )}
+            </div>
           );
         },
       },
@@ -572,9 +715,18 @@ function MostrarDatosDocente() {
         },
         customBodyRender: () => {
           return (
-            <Button variant="primary" onClick={handleShowEditRed}>
-              Editar
-            </Button>
+            <div>
+              {data4.length > 0 ? (
+                <Button variant="primary" onClick={handleShowEditRed}>
+                  Editar
+                </Button>
+              ) : (
+                <Button variant="primary" onClick={handleShowEditRed} >
+                  Agregar Datos
+                </Button>
+              )}
+            </div>
+
           );
         },
       },
@@ -609,43 +761,47 @@ function MostrarDatosDocente() {
       },
     },
   };
-
-  //Datos Generales para la tabla Datos Generales
+  // Datos Generales para la tabla Datos Generales
   const transformedDatosGenerales = dataGenerales.map((datosGenerales, index) => {
-    const datosRestantes = dataGenerales2.map((docente) => {
+    const docente = dataGenerales2[index]; // Obtener los datos del docente correspondiente
+    return [
+      datosGenerales.identification || "",
+      datosGenerales.name || "",
+      datosGenerales.lastname || "",
+      datosGenerales.email || "",
+      docente ? docente.faculty || "" : "", // Verificar si el objeto docente existe antes de acceder a sus propiedades
+      docente ? docente.modality || "" : "",
+      docente ? docente.category || "" : ""
+    ];
+  });
+
+  // Datos Generales para la tabla Datos Devengamiento
+  const transformedDatosDevengamiento = data3.length > 0
+    ? data3.map((datosDevengamiento, index) => {
+      return [
+        datosDevengamiento.thesisLink || "",
+        datosDevengamiento.fechaLecturaTesis|| "",
+        datosDevengamiento.fechaReintegroTesis|| "",
+        datosDevengamiento.accrualTime|| "",
+        datosDevengamiento.contractAddendumLink|| "",
+      ];
     })
-    return [
-      datosGenerales.identification,
-      datosGenerales.name,
-      datosGenerales.lastname,
-      datosGenerales.email,
-      docente.faculty,
-      docente.modality,
-      docente.category
-
+    : [
+      ""
     ];
-  });
 
-  //Datos Generales para la tabla Datos Devengamiento
-  const transformedDatosDevengamiento = data3.map((datosDevengamiento, index) => {
-
-    return [
-      datosDevengamiento.thesisLink,
-      datosDevengamiento.fechaLecturaTesis,
-      datosDevengamiento.fechaReintegroTesis,
-      datosDevengamiento.accrualTime,
-      datosDevengamiento.contractAddendumLink,
+  // Datos Generales para la tabla Datos Redes
+  const transformedDatosRedes = data4.length > 0 ?
+    data4.map((datosRedes, index) => {
+      return [
+        datosRedes.cedia,
+        datosRedes.rniSenesyt,
+        datosRedes.orcidCode,
+      ];
+    })
+    : [
+      ""
     ];
-  });
-
-  //Datos Generales para la tabla Datos Redes
-  const transformedDatosRedes = data4.map((datosRedes, index) => {
-    return [
-      datosRedes.cedia,
-      datosRedes.rniSenesyt,
-      datosRedes.orcidCode
-    ];
-  });
 
   return (
     <div>
@@ -777,9 +933,15 @@ function MostrarDatosDocente() {
           >
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Enviar
-          </Button>
+          {data3.length > 0 ? (
+            <Button variant="primary" onClick={handleSubmit}>
+              Editar
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={agregarDatosDevengamiento}>
+              Agregar Datos
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
       <div className="p-3 m-3">
@@ -882,11 +1044,79 @@ function MostrarDatosDocente() {
           >
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleSubmitRedes}>
-            Enviar
-          </Button>
+          {data4.length > 0 ? (
+            <Button variant="primary" onClick={handleSubmitRedes}>
+              Editar
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={agregarDatosRedes}>
+              Agregar Datos
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
+
+      <Modal show={ShowDatosG} onHide={handleCloseDatosG}>
+        <Modal.Header closeButton>
+          <Modal.Title>Datos Generales </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="container py-3  text-center ">
+            <div className="card-body">
+
+              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+
+                <label className="p-2 col-form-label" htmlFor="modalidad">Modalidad de devengamiento:</label>
+                <div className="p-2 col-sm-8">
+                  <select
+                    id="modalidad"
+                    required={true}
+                    onChange={handleChange6}
+                    value={valorModalidad}
+                    className="form-control">
+                    <option className="text-center"> ** Seleccione **</option>
+                    <option value="Tiempo de devengamiento">Tiempo de devengamiento</option>
+                    <option value="Medio tiempo (combinado)">Medio tiempo (combinado)</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-group  d-flex flex-column justify-content-center align-items-center py-2">
+                <label className="p-2 col-form-label" htmlFor="categoria">Categoría del Docente:</label>
+                <div className="p-2 col-sm-8">
+                  <select
+                    id="categoria"
+                    required={true}
+                    onChange={handleChange7}
+                    value={valorCategoria}
+                    className="form-control">
+                    <option className="text-center"> ** Seleccione **</option>
+                    <option value="Auxiliar 1">Auxiliar 1</option>
+                    <option value="Auxiliar 2">Auxiliar 2</option>
+                    <option value="Agregado 1">Agregado 1</option>
+                    <option value="Agregado 2">Agregado 2</option>
+                    <option value="Agregado 3">Agregado 3</option>
+                    <option value="Principal">Principal</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={handleCloseDatosG}
+          >
+            Cancelar
+          </Button>
+
+          <Button variant="primary" onClick={actualizarDatosGenerales}>
+            Agregar Datos
+          </Button>
+
+        </Modal.Footer>
+      </Modal>
+
       <div className="py-2 text-center">
         <Button variant="primary" onClick={handleShow}>
           Observaciones{" "}

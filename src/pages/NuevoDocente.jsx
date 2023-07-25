@@ -115,7 +115,7 @@ function NuevoDocente() {
                 },
                 body: JSON.stringify(datosSubmit),
             });
-
+            const error = Object.values(respuesta);
             if (respuesta.ok) {
                 await Swal.fire({
                     title: "Enviado",

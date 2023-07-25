@@ -2,7 +2,6 @@ import { Form, useActionData } from "react-router-dom";
 import FormularioNuevaActividad from "../components/FormularioNuevaActividad";
 import Swal from "sweetalert2";
 import Error from "../components/Error";
-import { useState } from "react";
 
 const variableSubmit = "https://accrualback.up.railway.app/activityPlanAccrual";
 

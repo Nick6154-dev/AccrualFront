@@ -230,8 +230,6 @@ function AbrirCerrarPeriodos() {
 
             if (respuesta.ok) {
                 obtenerPeriodos();
-
-
                 // Reordenar los periodos activos primero
                 dataPeriodo.sort((a, b) => {
                     if (a.period.active && !b.period.active) {
