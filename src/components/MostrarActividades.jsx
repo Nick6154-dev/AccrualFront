@@ -116,7 +116,7 @@ function MostrarActividades() {
 
   useEffect(() => {
     if (periodos.length === 1) {
-      const respuesta = obtenerActividadesAPI(token, idPeriodo, idPersona);
+      const respuesta = obtenerActividadesAPI(token, idPersona, idPeriodo);
       respuesta.then(respuesta => {
         const resultado = respuesta; // Aquí obtienes el PromiseResult
         setDatosActividadPlan(resultado);
