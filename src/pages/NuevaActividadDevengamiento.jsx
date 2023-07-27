@@ -7,7 +7,6 @@ const variableSubmit = "https://accrualback.up.railway.app/activityPlanAccrual";
 
 const token = sessionStorage.getItem("token");
 
-
 export async function action({ request }) {
 
   const token = sessionStorage.getItem("token");
@@ -52,6 +51,7 @@ export async function action({ request }) {
       datos.verificationLink = enlaceVerificacion;
       datos.otherInstitutionName = nombreOtraInstitucion;
       datos.institutionName = nombreOtraInstitucion;
+
     } else if (enlaceVerificacion === "" && nombreOtraInstitucion === "") {
       datos.idCareer = idCarrera;
       datos.idFaculty = idFacultad;

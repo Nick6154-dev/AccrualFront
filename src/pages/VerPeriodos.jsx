@@ -8,7 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 
 const variableObtenerPeriodos = "https://accrualback.up.railway.app/validator/findPlansByPerson";
-const variableValidador = "https://accrualback.up.railway.app/validator/updateStateObservationsPlan";
+const variableValidador = "https://accrualback.up.railway.app/validator/approvePlan";
 const variableExcel = "https://accrualback.up.railway.app/validator/generateExcel"
 
 function VerPeriodos() {
@@ -91,7 +91,6 @@ function VerPeriodos() {
     //Consulta a docentes que han llenado los planes
     useEffect(() => {
         const peticion = async () => {
-
             try {
                 const response = await fetch(`${variableObtenerPeriodos}/${idPersona}`, {
                     method: "GET",
@@ -102,8 +101,6 @@ function VerPeriodos() {
                     },
                 });
                 const data1 = await response.json();
-
-
                 setDataPeriodos([data1]);
             } catch (error) {
                 console.log(error);
@@ -112,7 +109,7 @@ function VerPeriodos() {
         peticion();
 
     }, []);
-
+console.log(dataPeriodos)
 
     // Definimos las columnas
     const columns = [
@@ -231,7 +228,6 @@ function VerPeriodos() {
             ];
         });
     });
-
     const options = {
         responsive: "standard",
         selectableRows: "none",
@@ -284,11 +280,10 @@ function VerPeriodos() {
 
     const handleRadioChange = (event) => {
         setSelectedValue(event.target.value);
-        if (event.target.value === '1') {
-            setTextareaValue('Aprobado Planificación');
-        }
-        if (event.target.value === '3') {
-            setTextareaValue('Aprobado Evidencias');
+        if (event.target.value === 'true') {
+            setTextareaValue('Aprobado');
+        } else if (event.target.value ==="false"){
+            setTextareaValue("")
         }
     };
 
@@ -334,12 +329,7 @@ function VerPeriodos() {
 
     const dataNotificar = {
         idPlan: idPlanObtenido,
-        starDate: null,
-        numberPlan: null,
-        idDocent: null,
-        editable: null,
-        state: selectedValue,
-        period: null,
+        approved: selectedValue,
         observations: textareaValue
     }
 
@@ -354,7 +344,11 @@ function VerPeriodos() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(dataNotificar),
+               
             });
+            const data1 = await respuesta.json();
+            const error = Object.values(data1);
+            console.log(error);
 
             if (respuesta.ok) {
                 await Swal.fire({
@@ -369,7 +363,7 @@ function VerPeriodos() {
             } else {
                 await Swal.fire({
                     title: "Error",
-                    text: "Ocurrió un error al enviar la validación",
+                    text: error,
                     icon: "error",
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: "OK",
@@ -417,38 +411,24 @@ function VerPeriodos() {
 
                 <Modal.Body>
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio1" value="1"
-                            checked={selectedValue === '1'}
+                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio1" value={true}
+                            checked={selectedValue === "true"}
                             onChange={handleRadioChange}
+
                         />
                         <label className="form-check-label" htmlFor="radio1">
-                            Aprobar Planificación
+                            Aprobar
                         </label>
                     </div>
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio2" value="2"
-                            checked={selectedValue === '2'}
+                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio2" value={false}
+                            checked={selectedValue === "false"}
                             onChange={handleRadioChange} />
                         <label className="form-check-label" htmlFor="radio2">
-                            Denegar Planificación
+                            Denegar
                         </label>
                     </div>
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio3" value="3"
-                            checked={selectedValue === '3'}
-                            onChange={handleRadioChange} />
-                        <label className="form-check-label" htmlFor="radio3">
-                            Aprobar Evidencias
-                        </label>
-                    </div>
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="exampleRadios" id="radio4" value="4"
-                            checked={selectedValue === '4'}
-                            onChange={handleRadioChange} />
-                        <label className="form-check-label" htmlFor="radio4">
-                            Denegar Evidencias
-                        </label>
-                    </div>
+
                     <div className="form-group m-2">
                         <label htmlFor="observaciones ">Observaciones: </label>
                         <textarea required className="form-control" id="observaciones" rows="3"

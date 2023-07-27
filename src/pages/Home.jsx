@@ -47,7 +47,6 @@ function Home() {
           },
         });
         const periodosData = await responsePeriodos.json();
-       console.log(periodosData)
         const periodoValorModo = periodosData.map((periodos) => periodos.state);
         setModoPeriodo(periodoValorModo);
         
