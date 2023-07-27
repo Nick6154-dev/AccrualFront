@@ -7,11 +7,9 @@ const variableSubmit = "https://accrualback.up.railway.app/activityPlanAccrual";
 
 const token = sessionStorage.getItem("token");
 
-const periodosCompletos = localStorage.getItem("periodosCompletos");
-const periodos = JSON.parse(periodosCompletos)
 
 export async function action({ request }) {
-
+  
   const token = sessionStorage.getItem("token");
 
 
@@ -62,7 +60,6 @@ export async function action({ request }) {
     }
   }
 
-  console.log(datos);
   //Validacion
   const errores = [];
   if (Object.values(datos).includes("")) {
@@ -128,6 +125,10 @@ export async function action({ request }) {
 }
 function NuevaActividadDevengamiento() {
   const errores = useActionData();
+  
+  const periodosCompletos = localStorage.getItem("periodosCompletos");
+  const periodos = JSON.parse(periodosCompletos)
+
   return (
     <div>
       <Form method="post">

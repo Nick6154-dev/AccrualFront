@@ -33,7 +33,7 @@ function FormularioNuevaActividad({ actividad }) {
   //Validando el select
   const [opcionPeriodos, setOpcionPeriodos] = useState();
   const periodos = JSON.parse(periodosCompletos);
-
+  console.log(periodos);
   const [selectedState, setSelectedState] = useState();
 
   const opcionesPeriodos = periodos.map((periodo) => ({
