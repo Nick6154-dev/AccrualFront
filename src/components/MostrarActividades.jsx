@@ -39,6 +39,12 @@ function MostrarActividades() {
     };
   }, []);
 
+
+
+  const handleGoBack = () => {
+    navigate(-1); // Navegar hacia atrás en el historial
+  };
+  
   //Obtenemos el idPersona con estado
   const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
   useEffect(() => {
@@ -54,6 +60,7 @@ function MostrarActividades() {
   }, []);
 
   const idPeriodo = localStorage.getItem("idPeriodo");
+
   const periodosCompletos = localStorage.getItem("periodosCompletos");
 
   const [datosActividadPlan, setDatosActividadPlan] = useState([]);
@@ -429,8 +436,7 @@ function MostrarActividades() {
       },
     });
   }
-  //Datos para el dataTable
-  const transformedData = datosActividadPlan
+  const transformedData = (Array.isArray(datosActividadPlan) && idPeriodo !== null)
     ? datosActividadPlan.map((actividades, index) => {
       return [
         index + 1, // Columna #
@@ -445,8 +451,6 @@ function MostrarActividades() {
       ];
     })
     : [];
-
-
   const options = {
 
     responsive: "standard",
@@ -710,7 +714,18 @@ function MostrarActividades() {
             </div>
           )}
         </div>
-      ) : null}
+      ) :
+        <div>
+          <div className="alert alert-danger m-4 text-center" role="alert">
+            <h4> No existe un periodo activo</h4>
+          </div>
+          <div className="text-center">
+            <button className="btn btn-primary" onClick={handleGoBack}>
+              Volver atrás
+            </button>
+          </div>
+        </div>
+      }
 
     </div >
   );

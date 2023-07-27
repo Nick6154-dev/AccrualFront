@@ -7,9 +7,13 @@ const variableSubmit = "https://accrualback.up.railway.app/activityPlanAccrual";
 
 const token = sessionStorage.getItem("token");
 
+const periodosCompletos = localStorage.getItem("periodosCompletos");
+const periodos = JSON.parse(periodosCompletos)
+
 export async function action({ request }) {
 
   const token = sessionStorage.getItem("token");
+
 
   const storedData = localStorage.getItem("datoSeleccionado");
   const idPersona = sessionStorage.getItem("idPersona");
@@ -44,20 +48,20 @@ export async function action({ request }) {
     datos.idUniversity = idUniversidad;
     datos.institutionName = institutionNameLocal;
   }
-  if(modoPeriodo== 1){
+  if (modoPeriodo == 1) {
     if (idCarrera === "") {
       datos.verificationLink = enlaceVerificacion;
       datos.otherInstitutionName = nombreOtraInstitucion;
       datos.institutionName = nombreOtraInstitucion;
-    } 
-  } else if (modoPeriodo== 2){
+    }
+  } else if (modoPeriodo == 2) {
     if (idCarrera === "") {
-     
+
       datos.otherInstitutionName = nombreOtraInstitucion;
       datos.institutionName = nombreOtraInstitucion;
-    } 
+    }
   }
-  
+
   console.log(datos);
   //Validacion
   const errores = [];
@@ -130,13 +134,16 @@ function NuevaActividadDevengamiento() {
         <FormularioNuevaActividad />
         {errores?.length &&
           errores.map((error, i) => <Error key={i}>{error} </Error>)}
-        <div className="text-center py-3">
-          <input
-            className="btn btn-primary my-2 "
-            type="submit"
-            value="Registrar"
-          />
-        </div>
+
+        {periodos.length > 0 ? (
+          <div className="text-center py-3">
+            <input
+              className="btn btn-primary my-2"
+              type="submit"
+              value="Registrar"
+            />
+          </div>
+        ) : null}
       </Form>
     </div>
   );
