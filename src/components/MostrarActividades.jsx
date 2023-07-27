@@ -127,12 +127,15 @@ function MostrarActividades() {
       respuesta.then(respuesta => {
         const resultado = respuesta; // Aquí obtienes el PromiseResult
         setDatosActividadPlan(resultado);
+            const error = Object.values(resultado);
+            console.log(error);
       }).catch(error => {
         console.error('Error al obtener el resultado de la promesa:', error);
       });
     }
 
   }, []);
+
 
   useEffect(() => {
     if (opcionPeriodos) {

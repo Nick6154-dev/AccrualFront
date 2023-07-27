@@ -33,7 +33,6 @@ function FormularioNuevaActividad({ actividad }) {
   //Validando el select
   const [opcionPeriodos, setOpcionPeriodos] = useState();
   const periodos = JSON.parse(periodosCompletos);
-  console.log(periodos);
   const [selectedState, setSelectedState] = useState();
 
   const opcionesPeriodos = periodos.map((periodo) => ({
@@ -235,6 +234,8 @@ function FormularioNuevaActividad({ actividad }) {
         "onChange",
         cambiarEstadoModal5(!estadoModal5)
       );
+      setvalorOtraInstitucion("");
+      setValorEnlaceVerificacion("");
       localStorage.setItem("universidad", "Universidad Central del Ecuador");
     }
     if (valueSelectInstitucion === "1") {
@@ -242,6 +243,10 @@ function FormularioNuevaActividad({ actividad }) {
         "onChange",
         cambiarEstadoModal6(!estadoModal6)
       );
+        setvalorSelectFacultad(1);
+      setvalorSelectUniversidad("");
+      setvalorSelectCarrera("");
+      localStorage.removeItem("universidad");
     }
   }
   return (

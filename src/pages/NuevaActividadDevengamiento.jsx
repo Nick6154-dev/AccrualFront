@@ -9,7 +9,7 @@ const token = sessionStorage.getItem("token");
 
 
 export async function action({ request }) {
-  
+
   const token = sessionStorage.getItem("token");
 
 
@@ -47,19 +47,25 @@ export async function action({ request }) {
     datos.institutionName = institutionNameLocal;
   }
   if (modoPeriodo == 1) {
+    
     if (idCarrera === "") {
       datos.verificationLink = enlaceVerificacion;
       datos.otherInstitutionName = nombreOtraInstitucion;
       datos.institutionName = nombreOtraInstitucion;
+    } else if (enlaceVerificacion === "" && nombreOtraInstitucion === "") {
+      datos.idCareer = idCarrera;
+      datos.idFaculty = idFacultad;
+      datos.idUniversity = idUniversidad;
+      datos.institutionName = institutionNameLocal;
     }
   } else if (modoPeriodo == 2) {
     if (idCarrera === "") {
-
       datos.otherInstitutionName = nombreOtraInstitucion;
       datos.institutionName = nombreOtraInstitucion;
     }
   }
 
+  console.log(datos);
   //Validacion
   const errores = [];
   if (Object.values(datos).includes("")) {
@@ -83,7 +89,6 @@ export async function action({ request }) {
     });
     const respuestaEnviar = await respuesta.json();
     const error = Object.values(respuestaEnviar);
-    console.log(respuestaEnviar);
     if (respuesta.ok) {
       await Swal.fire({
         title: "Actividad Registrada",
@@ -125,7 +130,7 @@ export async function action({ request }) {
 }
 function NuevaActividadDevengamiento() {
   const errores = useActionData();
-  
+
   const periodosCompletos = localStorage.getItem("periodosCompletos");
   const periodos = JSON.parse(periodosCompletos)
 
