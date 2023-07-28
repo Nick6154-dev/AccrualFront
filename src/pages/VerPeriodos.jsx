@@ -89,8 +89,8 @@ function VerPeriodos() {
 
 
     //Consulta a docentes que han llenado los planes
-    useEffect(() => {
-        const peticion = async () => {
+   
+        const peticionPeriodos = async () => {
             try {
                 const response = await fetch(`${variableObtenerPeriodos}/${idPersona}`, {
                     method: "GET",
@@ -101,15 +101,17 @@ function VerPeriodos() {
                     },
                 });
                 const data1 = await response.json();
-                setDataPeriodos([data1]);
+
+                setDataPeriodos(data1);
             } catch (error) {
                 console.log(error);
             }
         };
-        peticion();
 
-    }, []);
-console.log(dataPeriodos)
+//Consulta de los periodos
+useEffect(() => {
+    peticionPeriodos();
+}, []);
 
     // Definimos las columnas
     const columns = [
@@ -154,8 +156,7 @@ console.log(dataPeriodos)
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
 
-                    const plan = dataPeriodos[0].plans[rowIndex];
-
+                    const plan = dataPeriodos[rowIndex].plan;
                     const handleShow2 = () => {
                         const idPlanOpcion = plan.idPlan;
                         setIdPlanObtenido(idPlanOpcion);
@@ -181,7 +182,7 @@ console.log(dataPeriodos)
 
                 customBodyRender: (value, tableMeta, updateValue) => {
                     const rowIndex = tableMeta.rowIndex;
-                    const plan = dataPeriodos[0].plans[rowIndex];
+                    const plan = dataPeriodos[rowIndex].plan;
 
 
                     const handleShow = () => {
@@ -204,29 +205,14 @@ console.log(dataPeriodos)
     ];
 
 
-    const transformedData = dataPeriodos.flatMap((periodo, index) => {
-        return periodo.plans.map((plan, planIndex) => {
-            let stateText = "";
-            switch (plan.state) {
-                case 0:
-                    stateText = "En revisión";
-                    break;
-                case 1:
-                    stateText = "Aprobado";
-                    break;
-                case 2:
-                    stateText = "Denegado";
-                    break;
-                default:
-                    stateText = "";
-                    break;
-            }
-            return [
-                planIndex + 1, // Columna #
-                plan.period.valuePeriod, // Columna Periodo
-                <span>{stateText}</span>
-            ];
-        });
+    const transformedData = dataPeriodos.map((periodo, index) => {
+
+        return [
+            index + 1, // Columna #
+            periodo.plan.period.valuePeriod, // Columna Periodo
+            periodo.statePlan
+        ];
+
     });
     const options = {
         responsive: "standard",
@@ -282,7 +268,7 @@ console.log(dataPeriodos)
         setSelectedValue(event.target.value);
         if (event.target.value === 'true') {
             setTextareaValue('Aprobado');
-        } else if (event.target.value ==="false"){
+        } else if (event.target.value === "false") {
             setTextareaValue("")
         }
     };
@@ -344,7 +330,7 @@ console.log(dataPeriodos)
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(dataNotificar),
-               
+
             });
             const data1 = await respuesta.json();
             const error = Object.values(data1);
@@ -359,7 +345,10 @@ console.log(dataPeriodos)
                     confirmButtonColor: "#3085d6",
 
                 });
-                window.location.href = "/#/revisarValidar";
+                peticionPeriodos();
+                setShow(false);
+                setTextareaValue("");
+                setSelectedValue();
             } else {
                 await Swal.fire({
                     title: "Error",

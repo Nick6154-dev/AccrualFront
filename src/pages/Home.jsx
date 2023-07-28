@@ -74,7 +74,7 @@ function Home() {
 
          const periodoValorModo = periodosData.map((periodos) => periodos.state);
           const valorModo= periodoValorModo[0];
-        localStorage.setItem("modoPeriodo", valorModo);
+        localStorage.setItem("modoPeriodoActual", valorModo);
         
           const activoObtenido = periodosData[0].active;
           const modoObtenido = periodosData[0].state;

@@ -44,7 +44,7 @@ function MostrarActividades() {
   const handleGoBack = () => {
     navigate(-1); // Navegar hacia atrás en el historial
   };
-  
+
   //Obtenemos el idPersona con estado
   const [idPersona, setIdPersona] = useState(sessionStorage.getItem("idPersona"));
   useEffect(() => {
@@ -94,6 +94,10 @@ function MostrarActividades() {
 
   };
 
+  //Enviar el periodo Actual al LocalStorage
+  localStorage.setItem("idPeriodoActual", opcionPeriodos);
+  //Enviar el modo del periodo actual al localStorage
+  localStorage.setItem("modoPeriodoActual", selectedState);
   // Modal1 
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
@@ -113,12 +117,16 @@ function MostrarActividades() {
   const [valorEnlaceEvidencia, setValorEnlaceEvidencia] = useState("");
   const [valorEnlaceVerificacion, setValorEnlaceVerificacion] = useState("");
 
+
+  //Validar Editar
+
   function handleChange(event) {
     setValorEnlaceEvidencia(event.target.value);
   }
 
   function handleChange2(event) {
     setValorEnlaceVerificacion(event.target.value);
+
   }
 
   useEffect(() => {
@@ -127,8 +135,7 @@ function MostrarActividades() {
       respuesta.then(respuesta => {
         const resultado = respuesta; // Aquí obtienes el PromiseResult
         setDatosActividadPlan(resultado);
-            const error = Object.values(resultado);
-            console.log(error);
+        const error = Object.values(resultado);
       }).catch(error => {
         console.error('Error al obtener el resultado de la promesa:', error);
       });
@@ -143,6 +150,7 @@ function MostrarActividades() {
       respuestaPromise.then(respuesta => {
         const resultado = respuesta;
         setDatosActividadPlan(resultado);
+        const error = Object.values(resultado);
       }).catch(error => {
         console.error('Error al obtener el resultado de la promesa:', error);
       });
@@ -385,14 +393,14 @@ function MostrarActividades() {
               await eliminarActividad(idActividad, token);
             }
           };
+
           return (
             <div>
               <div className="d-grid gap-2 d-sm-block">
-                <Button variant="primary" className=" mx-1 btn-block" onClick={() =>
-                  navigate(
-                    `/actividades/${idActividad}/editar`
-                  )
-                } >
+                <Button variant="primary" className=" mx-1 btn-block" onClick={() => {
+
+                  navigate(`/actividades/${idActividad}/editar`);
+                }}>
                   Editar
                 </Button>
                 <Button variant="danger" className="mx-1 btn-block my-2" onClick={handleEliminar}>

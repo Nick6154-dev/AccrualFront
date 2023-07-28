@@ -45,6 +45,7 @@ export async function action({ request }) {
     datos.idUniversity = idUniversidad;
     datos.institutionName = institutionNameLocal;
   }
+  
   if (modoPeriodo == 1) {
     
     if (idCarrera === "") {
