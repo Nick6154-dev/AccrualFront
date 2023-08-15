@@ -696,7 +696,7 @@ function MostrarDatosDocente() {
       },
     },
     {
-      name: "Codigo ORCI",
+      name: "Código ORCID",
       options: {
         customHeadRender: (columnMeta) => {
           return (

@@ -10,6 +10,7 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import Checkbox from '@mui/material/Checkbox';
+import { downloadDatosDocentes } from '../api/revisarValidar';
 
 const variableObtenerDocentes = "https://accrualback.up.railway.app/validator/findAllDocentPersonPlans";
 const variableAprobarPlanes = "https://accrualback.up.railway.app/validator/approveAllPlans";
@@ -23,10 +24,10 @@ function RevisarValidar() {
     const handleShow = () => setShow(true);
 
     const navigate = useNavigate();
-
+    
     //Obtener los valores de la consula de los docentes
     const [dataDocentes, setDataDocentes] = useState([]);
-
+    
     //Obtenemos el Token con estado
     const [token, setToken] = useState(sessionStorage.getItem("token"));
     useEffect(() => {
@@ -112,7 +113,6 @@ function RevisarValidar() {
         }
         return null;
     }
-
     // Definimos las columnas
     const columns = [
         {
@@ -216,7 +216,36 @@ function RevisarValidar() {
             },
         },
         {
-            name: "Acción",
+            name: "",
+            options: {
+                customHeadRender: (columnMeta) => {
+                    return (
+                        <th className="header-datatable">{columnMeta.label}</th>
+                    );
+                },
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    const rowIndex = tableMeta.rowIndex;
+                    const docente = dataDocentes[rowIndex];
+                
+                    
+                    const handleVerDatos = async () => {
+                        
+                        const nombreDocente = docente.person.name;
+                        const apellidoDocente= docente.person.lastname;
+                        const idPerson= docente.person.idPerson;
+                        await downloadDatosDocentes(token, idPerson, nombreDocente, apellidoDocente);
+                    };
+
+                    return (
+                        <Button variant="link" onClick={handleVerDatos}>
+                            Ver Datos
+                        </Button>
+                    );
+                },
+            },
+        },
+        {
+            name: "",
             options: {
                 customHeadRender: (columnMeta) => {
                     return (
@@ -288,7 +317,7 @@ function RevisarValidar() {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'ActivitiesPlan.xlsx');
+                link.setAttribute('download', 'ActividadesPlan.xlsx');
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
