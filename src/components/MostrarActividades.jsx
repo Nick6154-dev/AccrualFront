@@ -447,18 +447,25 @@ function MostrarActividades() {
       },
     });
   }
+
+  console.log(datosActividadPlan);
   const transformedData = (Array.isArray(datosActividadPlan) && idPeriodo !== null)
     ? datosActividadPlan.map((actividades, index) => {
+      const nameActivityType = actividades.activityPlan.type.nameActivityType || ''; // Validar nameActivityType
+      const startDate = actividades.activityPlan.activity.startDate || [];
+      const endDate = actividades.activityPlan.activity.endDate || [];
+      const description = actividades.activityPlan.activity.description || '';
+      const evidences = actividades.activityPlan.activity.evidences || '';
+      const institutionName = actividades.institutionPlan.institution.institutionName || '';
+
       return [
         index + 1, // Columna #
-        actividades.activityPlan.type.nameActivityType,
-        actividades.activityPlan.activity.startDate[0] + "/" + actividades.activityPlan.activity.startDate[1] + "/" +
-        actividades.activityPlan.activity.startDate[2],
-        actividades.activityPlan.activity.endDate[0] + "/" + actividades.activityPlan.activity.endDate[1] + "/" +
-        actividades.activityPlan.activity.endDate[2],
-        actividades.activityPlan.activity.description,
-        actividades.activityPlan.activity.evidences,
-        actividades.institutionPlan.institution.institutionName
+        nameActivityType,
+        (startDate[0] && startDate[1] && startDate[2]) ? startDate[0] + "/" + startDate[1] + "/" + startDate[2] : 'No existen datos', // Validar fecha de inicio
+        (endDate[0] && endDate[1] && endDate[2]) ? endDate[0] + "/" + endDate[1] + "/" + endDate[2] : 'No existen datos', // Validar fecha de fin
+        description,
+        evidences,
+        institutionName
       ];
     })
     : [];
